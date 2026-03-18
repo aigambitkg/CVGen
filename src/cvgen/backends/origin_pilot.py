@@ -99,17 +99,13 @@ class OriginPilotBackend(QuantumBackend):
             )
         return self._fallback.capabilities
 
-    def execute(
-        self, circuit: QuantumCircuit, config: JobConfig | None = None
-    ) -> CircuitResult:
+    def execute(self, circuit: QuantumCircuit, config: JobConfig | None = None) -> CircuitResult:
         """Execute circuit on Origin Pilot or fallback simulator."""
         if not HAS_QPANDA:
             return self._fallback.execute(circuit, config)
         return self._execute_qpanda(circuit, config or JobConfig())
 
-    def _execute_qpanda(
-        self, circuit: QuantumCircuit, config: JobConfig
-    ) -> CircuitResult:
+    def _execute_qpanda(self, circuit: QuantumCircuit, config: JobConfig) -> CircuitResult:
         """Execute using QPanda backend."""
         # Initialize QPanda machine
         machine = pq.CPUQVM()

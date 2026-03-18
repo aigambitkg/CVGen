@@ -37,7 +37,9 @@ def partial_trace(statevector: np.ndarray, num_qubits: int, keep: list[int]) -> 
 
     # Trace out qubits from highest index to lowest to maintain index validity
     for q in reversed(trace_out):
-        rho_tensor = np.trace(rho_tensor, axis1=q, axis2=q + num_qubits - (num_qubits - len(shape) // 2))
+        rho_tensor = np.trace(
+            rho_tensor, axis1=q, axis2=q + num_qubits - (num_qubits - len(shape) // 2)
+        )
 
     keep_dim = 2 ** len(keep)
     return rho_tensor.reshape(keep_dim, keep_dim)

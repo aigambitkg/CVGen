@@ -56,9 +56,7 @@ def build_qrng_circuit(num_bits: int) -> QuantumCircuit:
     return qc
 
 
-def build_grover_oracle(
-    num_qubits: int, target_state: int
-) -> QuantumCircuit:
+def build_grover_oracle(num_qubits: int, target_state: int) -> QuantumCircuit:
     """Build a Grover oracle circuit that marks a target state.
 
     The oracle flips the phase of the target state |target⟩.
@@ -146,9 +144,7 @@ def build_variational_ansatz(
     if params is None:
         params = [0.0] * num_params
     if len(params) != num_params:
-        raise ValueError(
-            f"Expected {num_params} parameters, got {len(params)}"
-        )
+        raise ValueError(f"Expected {num_params} parameters, got {len(params)}")
 
     qc = QuantumCircuit(num_qubits)
     qc.name = f"variational_d{depth}"
@@ -182,9 +178,7 @@ def analyze_result(result: CircuitResult) -> dict:
     sorted_probs = sorted(probs.items(), key=lambda x: x[1], reverse=True)
 
     # Shannon entropy
-    entropy = -sum(
-        p * np.log2(p) for p in probs.values() if p > 0
-    )
+    entropy = -sum(p * np.log2(p) for p in probs.values() if p > 0)
 
     return {
         "most_likely": sorted_probs[0] if sorted_probs else None,

@@ -18,7 +18,7 @@ async def run_grover_search(req: GroverRequest) -> GroverResponse:
     backend = get_backend(req.backend)
     agent = QuantumAgent(backend, shots=req.shots)
 
-    search_space = 2 ** req.num_qubits
+    search_space = 2**req.num_qubits
     for t in req.target_states:
         if t < 0 or t >= search_space:
             raise HTTPException(

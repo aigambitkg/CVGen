@@ -173,9 +173,7 @@ class TestMeasurement:
         qc = QuantumCircuit(1)
         qc.h(0)
         qc.measure_all()
-        result = sim.execute(
-            qc, JobConfig(shots=1, seed=42, return_statevector=True)
-        )
+        result = sim.execute(qc, JobConfig(shots=1, seed=42, return_statevector=True))
         assert result.statevector is not None
         assert len(result.statevector) == 2
 

@@ -38,9 +38,7 @@ class TestTaskScheduler:
         scheduler.register_backend("small", sim1)
         scheduler.register_backend("large", sim2)
 
-        name, _ = scheduler.select_backend(
-            BackendRequirements(preferred_backend="small")
-        )
+        name, _ = scheduler.select_backend(BackendRequirements(preferred_backend="small"))
         assert name == "small"
 
     def test_select_by_qubit_requirement(self):
@@ -50,9 +48,7 @@ class TestTaskScheduler:
         scheduler.register_backend("small", sim1)
         scheduler.register_backend("large", sim2)
 
-        name, _ = scheduler.select_backend(
-            BackendRequirements(min_qubits=5)
-        )
+        name, _ = scheduler.select_backend(BackendRequirements(min_qubits=5))
         assert name == "large"
 
     def test_job_history(self):
@@ -111,6 +107,7 @@ class TestCircuitOptimizer:
 
     def test_level_2_merge_rotations(self):
         import math
+
         opt = CircuitOptimizer()
         qc = QuantumCircuit(1)
         qc.rx(0, math.pi / 4).rx(0, math.pi / 4)
@@ -120,6 +117,7 @@ class TestCircuitOptimizer:
 
     def test_level_2_cancel_full_rotation(self):
         import math
+
         opt = CircuitOptimizer()
         qc = QuantumCircuit(1)
         qc.ry(0, math.pi).ry(0, math.pi)

@@ -22,6 +22,7 @@ T = np.array([[1, 0], [0, np.exp(1j * np.pi / 4)]], dtype=complex)
 
 # --- Parametric single-qubit gates ---
 
+
 def rx(theta: float) -> np.ndarray:
     """Rotation around X-axis."""
     c, s = np.cos(theta / 2), np.sin(theta / 2)
@@ -36,27 +37,19 @@ def ry(theta: float) -> np.ndarray:
 
 def rz(theta: float) -> np.ndarray:
     """Rotation around Z-axis."""
-    return np.array(
-        [[np.exp(-1j * theta / 2), 0], [0, np.exp(1j * theta / 2)]], dtype=complex
-    )
+    return np.array([[np.exp(-1j * theta / 2), 0], [0, np.exp(1j * theta / 2)]], dtype=complex)
 
 
 # --- Two-qubit gates ---
 
 # CNOT (controlled-X)
-CX = np.array(
-    [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 1], [0, 0, 1, 0]], dtype=complex
-)
+CX = np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 1], [0, 0, 1, 0]], dtype=complex)
 
 # Controlled-Z
-CZ = np.array(
-    [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, -1]], dtype=complex
-)
+CZ = np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, -1]], dtype=complex)
 
 # SWAP
-SWAP = np.array(
-    [[1, 0, 0, 0], [0, 0, 1, 0], [0, 1, 0, 0], [0, 0, 0, 1]], dtype=complex
-)
+SWAP = np.array([[1, 0, 0, 0], [0, 0, 1, 0], [0, 1, 0, 0], [0, 0, 0, 1]], dtype=complex)
 
 # --- Three-qubit gates ---
 
@@ -71,8 +64,17 @@ CCX[7, 6] = 1
 def get_gate_matrix(gate_name: str, params: tuple[float, ...] = ()) -> np.ndarray:
     """Get the matrix representation of a gate by name."""
     static_gates = {
-        "h": H, "x": X, "y": Y, "z": Z, "s": S, "t": T,
-        "cx": CX, "cz": CZ, "swap": SWAP, "ccx": CCX, "i": I,
+        "h": H,
+        "x": X,
+        "y": Y,
+        "z": Z,
+        "s": S,
+        "t": T,
+        "cx": CX,
+        "cz": CZ,
+        "swap": SWAP,
+        "ccx": CCX,
+        "i": I,
     }
     parametric_gates = {"rx": rx, "ry": ry, "rz": rz}
 

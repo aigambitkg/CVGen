@@ -21,10 +21,10 @@ logger = logging.getLogger(__name__)
 class ProblemType(Enum):
     """Detected problem types."""
 
-    SEARCH = auto()            # Unstructured search → Grover
-    OPTIMIZATION = auto()      # Continuous optimization → VQE
-    COMBINATORIAL = auto()     # Combinatorial optimization → QAOA
-    CLASSIFICATION = auto()    # Binary classification → QML
+    SEARCH = auto()  # Unstructured search → Grover
+    OPTIMIZATION = auto()  # Continuous optimization → VQE
+    COMBINATORIAL = auto()  # Combinatorial optimization → QAOA
+    CLASSIFICATION = auto()  # Binary classification → QML
     UNKNOWN = auto()
 
 
@@ -237,7 +237,8 @@ class AutoAgent:
         if "target_states" in data:
             # Grover: depth ~ O(sqrt(N))
             import math
-            estimates["estimated_depth"] = int(math.sqrt(2 ** n)) * 3 * n
+
+            estimates["estimated_depth"] = int(math.sqrt(2**n)) * 3 * n
         elif "edges" in data:
             # QAOA: depth ~ O(p * |E|)
             p = data.get("p", 2)

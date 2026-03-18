@@ -26,9 +26,7 @@ class QuantumBackend(ABC):
         """Backend capabilities and constraints."""
 
     @abstractmethod
-    def execute(
-        self, circuit: QuantumCircuit, config: JobConfig | None = None
-    ) -> CircuitResult:
+    def execute(self, circuit: QuantumCircuit, config: JobConfig | None = None) -> CircuitResult:
         """Execute a quantum circuit and return results.
 
         Args:

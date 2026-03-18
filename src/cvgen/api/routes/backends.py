@@ -17,14 +17,16 @@ async def list_backends() -> BackendListResponse:
     infos = []
     for name, backend in backend_registry.items():
         caps = backend.capabilities
-        infos.append(BackendInfo(
-            name=name,
-            max_qubits=caps.max_qubits,
-            supported_gates=[g.value for g in caps.supported_gates],
-            supports_statevector=caps.supports_statevector,
-            backend_type=_classify_backend(name),
-            status="available",
-        ))
+        infos.append(
+            BackendInfo(
+                name=name,
+                max_qubits=caps.max_qubits,
+                supported_gates=[g.value for g in caps.supported_gates],
+                supports_statevector=caps.supports_statevector,
+                backend_type=_classify_backend(name),
+                status="available",
+            )
+        )
 
     return BackendListResponse(backends=infos, default_backend="simulator")
 

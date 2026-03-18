@@ -62,9 +62,7 @@ class IBMCloudBackend(QuantumBackend):
         if not HAS_QISKIT:
             raise ImportError("Qiskit is required: pip install qiskit")
         if not HAS_IBM_RUNTIME:
-            raise ImportError(
-                "qiskit-ibm-runtime is required: pip install qiskit-ibm-runtime"
-            )
+            raise ImportError("qiskit-ibm-runtime is required: pip install qiskit-ibm-runtime")
 
         self._token = token
         self._instance = instance
@@ -92,19 +90,27 @@ class IBMCloudBackend(QuantumBackend):
         return BackendCapabilities(
             max_qubits=127,  # Eagle processors
             supported_gates={
-                GateType.H, GateType.X, GateType.Y, GateType.Z,
-                GateType.S, GateType.T,
-                GateType.RX, GateType.RY, GateType.RZ,
-                GateType.CX, GateType.CZ, GateType.SWAP, GateType.CCX,
-                GateType.MEASURE, GateType.BARRIER,
+                GateType.H,
+                GateType.X,
+                GateType.Y,
+                GateType.Z,
+                GateType.S,
+                GateType.T,
+                GateType.RX,
+                GateType.RY,
+                GateType.RZ,
+                GateType.CX,
+                GateType.CZ,
+                GateType.SWAP,
+                GateType.CCX,
+                GateType.MEASURE,
+                GateType.BARRIER,
             },
             supports_statevector=False,
             supports_mid_circuit_measurement=True,
         )
 
-    def execute(
-        self, circuit: QuantumCircuit, config: JobConfig | None = None
-    ) -> CircuitResult:
+    def execute(self, circuit: QuantumCircuit, config: JobConfig | None = None) -> CircuitResult:
         """Execute circuit on IBM Quantum hardware."""
         config = config or JobConfig()
         self._connect()

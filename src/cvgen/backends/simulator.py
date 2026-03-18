@@ -42,20 +42,27 @@ class StateVectorSimulator(QuantumBackend):
         return BackendCapabilities(
             max_qubits=self._max_qubits,
             supported_gates={
-                GateType.H, GateType.X, GateType.Y, GateType.Z,
-                GateType.S, GateType.T,
-                GateType.RX, GateType.RY, GateType.RZ,
-                GateType.CX, GateType.CZ, GateType.SWAP,
+                GateType.H,
+                GateType.X,
+                GateType.Y,
+                GateType.Z,
+                GateType.S,
+                GateType.T,
+                GateType.RX,
+                GateType.RY,
+                GateType.RZ,
+                GateType.CX,
+                GateType.CZ,
+                GateType.SWAP,
                 GateType.CCX,
-                GateType.MEASURE, GateType.BARRIER,
+                GateType.MEASURE,
+                GateType.BARRIER,
             },
             supports_statevector=True,
             supports_mid_circuit_measurement=True,
         )
 
-    def execute(
-        self, circuit: QuantumCircuit, config: JobConfig | None = None
-    ) -> CircuitResult:
+    def execute(self, circuit: QuantumCircuit, config: JobConfig | None = None) -> CircuitResult:
         config = config or JobConfig()
 
         errors = self.validate_circuit(circuit)
@@ -82,9 +89,7 @@ class StateVectorSimulator(QuantumBackend):
                 if op.gate_type == GateType.BARRIER:
                     continue
                 elif op.gate_type == GateType.MEASURE:
-                    statevector, outcome = self._measure_qubit(
-                        statevector, n, op.targets[0], rng
-                    )
+                    statevector, outcome = self._measure_qubit(statevector, n, op.targets[0], rng)
                     if op.classical_target is not None:
                         clbits[op.classical_target] = outcome
                 else:
@@ -129,17 +134,13 @@ class StateVectorSimulator(QuantumBackend):
 
         return statevector
 
-    def _apply_gate(
-        self, statevector: np.ndarray, num_qubits: int, op: GateOp
-    ) -> np.ndarray:
+    def _apply_gate(self, statevector: np.ndarray, num_qubits: int, op: GateOp) -> np.ndarray:
         """Apply a gate operation to the statevector."""
         gate_matrix = get_gate_matrix(op.gate_type.value, op.params)
         targets = op.targets
 
         if len(targets) == 1:
-            return self._apply_single_qubit_gate(
-                statevector, num_qubits, gate_matrix, targets[0]
-            )
+            return self._apply_single_qubit_gate(statevector, num_qubits, gate_matrix, targets[0])
         elif len(targets) == 2:
             return self._apply_two_qubit_gate(
                 statevector, num_qubits, gate_matrix, targets[0], targets[1]

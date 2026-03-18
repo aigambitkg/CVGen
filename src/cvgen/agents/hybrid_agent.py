@@ -115,10 +115,12 @@ class HybridAgent(BaseAgent):
         return AgentResult(
             success=True,
             value=result,
-            history=[{
-                "costs": self.opt_history.costs,
-                "num_evaluations": self.opt_history.num_circuit_evals,
-            }],
+            history=[
+                {
+                    "costs": self.opt_history.costs,
+                    "num_evaluations": self.opt_history.num_circuit_evals,
+                }
+            ],
             quantum_results=self._quantum_results,
             total_steps=self.opt_history.num_circuit_evals,
             metadata={
@@ -140,8 +142,7 @@ class HybridAgent(BaseAgent):
 
         def cost_function(params: np.ndarray) -> float:
             return self._evaluate_cost(
-                params.tolist(), task.num_qubits, task.ansatz_depth,
-                task.cost_observable
+                params.tolist(), task.num_qubits, task.ansatz_depth, task.cost_observable
             )
 
         # Run classical optimization
@@ -184,8 +185,5 @@ class HybridAgent(BaseAgent):
         self.opt_history.params.append(params)
         self.opt_history.num_circuit_evals += 1
 
-        logger.debug(
-            f"[{self.name}] Eval {self.opt_history.num_circuit_evals}: "
-            f"cost={cost:.6f}"
-        )
+        logger.debug(f"[{self.name}] Eval {self.opt_history.num_circuit_evals}: cost={cost:.6f}")
         return cost

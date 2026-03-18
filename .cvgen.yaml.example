@@ -1,0 +1,52 @@
+# CVGen Configuration File
+# Copy this file to .cvgen.yaml and customize for your environment
+
+cvgen:
+  version: "1.0.0"
+  log_level: INFO
+
+server:
+  host: "0.0.0.0"
+  port: 8000
+  debug: false
+
+backends:
+  simulator:
+    enabled: true
+    max_qubits: 20
+
+  origin_pilot:
+    enabled: false
+    host: localhost
+    job_port: 5555
+    telemetry_port: 5556
+
+  ibm_quantum:
+    enabled: false
+    token: ""
+    instance: "ibm-q/open/main"
+    backend: "ibm_brisbane"
+
+  aws_braket:
+    enabled: false
+    region: us-east-1
+    s3_bucket: ""
+    s3_prefix: cvgen-results
+    device_arn: "arn:aws:braket:::device/qpu/ionq/Harmony"
+
+  azure_quantum:
+    enabled: false
+    resource_id: ""
+    location: eastus
+    target: "ionq.simulator"
+
+llm:
+  provider: ollama
+  url: "http://localhost:11434"
+  model: "qwen2.5:7b"
+  embedding_model: "nomic-embed-text"
+
+rag:
+  enabled: true
+  qdrant_url: "http://localhost:6333"
+  collection: "cvgen_qpanda3"

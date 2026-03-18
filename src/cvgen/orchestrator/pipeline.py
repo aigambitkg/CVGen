@@ -87,21 +87,25 @@ class Pipeline:
             try:
                 current = fn(current)
                 duration = time.time() - start
-                result.steps.append(StepResult(
-                    step_name=step_name,
-                    output=current,
-                    duration_s=duration,
-                    success=True,
-                ))
+                result.steps.append(
+                    StepResult(
+                        step_name=step_name,
+                        output=current,
+                        duration_s=duration,
+                        success=True,
+                    )
+                )
             except Exception as e:
                 duration = time.time() - start
-                result.steps.append(StepResult(
-                    step_name=step_name,
-                    output=None,
-                    duration_s=duration,
-                    success=False,
-                    error=str(e),
-                ))
+                result.steps.append(
+                    StepResult(
+                        step_name=step_name,
+                        output=None,
+                        duration_s=duration,
+                        success=False,
+                        error=str(e),
+                    )
+                )
                 logger.error(f"[{self.name}] Step '{step_name}' failed: {e}")
                 break
 
