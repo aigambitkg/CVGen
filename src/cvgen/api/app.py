@@ -13,7 +13,8 @@ from fastapi.staticfiles import StaticFiles
 
 from cvgen import __version__
 from cvgen.api.models import HealthResponse
-from cvgen.api.routes import agents, backends, circuits, jobs
+from cvgen.api.routes import agents, backends, circuits, jobs, quantum_ask
+from cvgen.api.websocket import router as websocket_router
 from cvgen.backends.base import QuantumBackend
 from cvgen.backends.simulator import StateVectorSimulator
 
@@ -108,6 +109,11 @@ app.include_router(circuits.router, prefix="/api/v1")
 app.include_router(agents.router, prefix="/api/v1")
 app.include_router(backends.router, prefix="/api/v1")
 app.include_router(jobs.router, prefix="/api/v1")
+app.include_router(quantum_ask.router, prefix="/api/v1")
+app.include_router(quantum_ask.rag_router, prefix="/api/v1")
+
+# WebSocket routes
+app.include_router(websocket_router)
 
 # Serve web UI static files
 _web_static = Path(__file__).resolve().parent.parent / "web" / "static"

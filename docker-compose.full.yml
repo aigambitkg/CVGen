@@ -1,0 +1,141 @@
+version: '3.9'
+
+services:
+  # Initialize services before main application
+  init-bootstrap:
+    build:
+      context: .
+      dockerfile: Dockerfile.init
+    depends_on:
+      ollama:
+        condition: service_healthy
+      qdrant:
+        condition: service_healthy
+      cvgen:
+        condition: service_healthy
+    environment:
+      - OLLAMA_MODEL=${OLLAMA_MODEL:-qwen2.5:7b}
+      - OLLAMA_HOST=${OLLAMA_HOST:-http://ollama:11434}
+      - QDRANT_URL=${QDRANT_URL:-http://qdrant:6333}
+      - QDRANT_COLLECTION=${QDRANT_COLLECTION:-cvgen_qpanda3}
+      - CVGEN_API_URL=${CVGEN_API_URL:-http://cvgen:8000}
+    networks:
+      - cvgen-net
+    restart: "no"
+    container_name: cvgen-init
+
+  # Main CVGen Application (FastAPI + Web UI + Agents)
+  cvgen:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cvgen-api
+    ports:
+      - "${CVGEN_PORT:-8000}:8000"
+    depends_on:
+      ollama:
+        condition: service_healthy
+      qdrant:
+        condition: service_healthy
+    environment:
+      # CVGen Configuration
+      - CVGEN_HOST=0.0.0.0
+      - CVGEN_PORT=8000
+      - CVGEN_LOG_LEVEL=${CVGEN_LOG_LEVEL:-INFO}
+
+      # Ollama LLM Backend
+      - OLLAMA_HOST=${OLLAMA_HOST:-http://ollama:11434}
+      - OLLAMA_MODEL=${OLLAMA_MODEL:-qwen2.5:7b}
+
+      # Qdrant Vector Database
+      - QDRANT_URL=${QDRANT_URL:-http://qdrant:6333}
+      - QDRANT_COLLECTION=${QDRANT_COLLECTION:-cvgen_qpanda3}
+
+      # Origin Pilot (Quantum Backend)
+      - ORIGIN_PILOT_HOST=${ORIGIN_PILOT_HOST:-localhost}
+      - ORIGIN_PILOT_JOB_PORT=${ORIGIN_PILOT_JOB_PORT:-5555}
+      - ORIGIN_PILOT_TELEMETRY_PORT=${ORIGIN_PILOT_TELEMETRY_PORT:-5556}
+
+      # Quantum Cloud Backends (optional)
+      - IBM_QUANTUM_TOKEN=${IBM_QUANTUM_TOKEN:-}
+      - IBM_QUANTUM_BACKEND=${IBM_QUANTUM_BACKEND:-ibm_brisbane}
+      - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION:-}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:-}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-}
+      - CVGEN_BRAKET_S3_BUCKET=${CVGEN_BRAKET_S3_BUCKET:-}
+      - AZURE_QUANTUM_RESOURCE_ID=${AZURE_QUANTUM_RESOURCE_ID:-}
+      - AZURE_QUANTUM_LOCATION=${AZURE_QUANTUM_LOCATION:-eastus}
+
+    volumes:
+      - cvgen_data:/app/data
+    networks:
+      - cvgen-net
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  # Ollama LLM Runtime (Local LLM inference engine)
+  ollama:
+    image: ollama/ollama:latest
+    container_name: cvgen-ollama
+    ports:
+      - "11434:11434"
+    environment:
+      - OLLAMA_HOST=0.0.0.0:11434
+    volumes:
+      - ollama_data:/root/.ollama
+    networks:
+      - cvgen-net
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    # Uncomment below to enable GPU acceleration (NVIDIA)
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: all
+    #           capabilities: [gpu]
+
+  # Qdrant Vector Database (For RAG - Retrieval Augmented Generation)
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: cvgen-qdrant
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    environment:
+      - QDRANT_LOG_LEVEL=info
+    volumes:
+      - qdrant_data:/qdrant/storage
+    networks:
+      - cvgen-net
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:6333/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    command: ./qdrant --http-port 6333 --grpc-port 6334
+
+networks:
+  cvgen-net:
+    driver: bridge
+
+volumes:
+  cvgen_data:
+    driver: local
+  ollama_data:
+    driver: local
+  qdrant_data:
+    driver: local

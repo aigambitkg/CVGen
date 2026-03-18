@@ -1,0 +1,84 @@
+{
+  "name": "cvgen-desktop",
+  "version": "1.0.0",
+  "description": "CVGen - Quantum Computing for Every Device",
+  "main": "main.js",
+  "author": "AI-Gambit (PNB Solutions)",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev",
+    "build:win": "electron-builder --win",
+    "build:mac": "electron-builder --mac",
+    "build:linux": "electron-builder --linux",
+    "build:all": "electron-builder --win --mac --linux",
+    "pack": "electron-builder --dir",
+    "postinstall": "electron-builder install-app-deps"
+  },
+  "dependencies": {
+    "electron-updater": "^6.1.0",
+    "electron-log": "^5.0.0"
+  },
+  "devDependencies": {
+    "electron": "^28.0.0",
+    "electron-builder": "^24.0.0"
+  },
+  "build": {
+    "appId": "com.aigambit.cvgen",
+    "productName": "CVGen",
+    "copyright": "Copyright © 2026 AI-Gambit",
+    "directories": {
+      "output": "dist",
+      "buildResources": "resources"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "splash.html",
+      "resources/**/*"
+    ],
+    "extraResources": [
+      {
+        "from": "../dist-python/",
+        "to": "python-backend",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ],
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "icon": "resources/icon.ico"
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": false,
+      "installerIcon": "resources/icon.ico",
+      "uninstallerIcon": "resources/icon.ico",
+      "installerHeaderIcon": "resources/icon.ico"
+    },
+    "mac": {
+      "target": [
+        "dmg"
+      ],
+      "icon": "resources/icon.icns",
+      "category": "public.app-category.developer-tools"
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "icon": "resources/icon.png",
+      "category": "Development"
+    },
+    "publish": {
+      "provider": "github",
+      "owner": "aigambitkg",
+      "repo": "CVGen"
+    }
+  }
+}

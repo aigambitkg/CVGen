@@ -20,3 +20,9 @@ htmlcov/
 *.log
 .DS_Store
 Thumbs.db
+CVGen.AppDir/
+squashfs-root/
+appimagetool*
+CVGen.spec
+*.AppImage
+node_modules/

@@ -1,12 +1,28 @@
 {
-    "name": "CVGen Quantum Circuit Builder",
+    "name": "CVGen Quantum Dashboard",
     "short_name": "CVGen",
-    "description": "Quantum Computing accessible from any device",
+    "description": "Modern quantum computing dashboard - Build, execute, and monitor quantum circuits",
     "start_url": "/",
     "display": "standalone",
     "background_color": "#0a0e27",
-    "theme_color": "#0a0e27",
+    "theme_color": "#00d9ff",
     "orientation": "any",
+    "scope": "/",
+    "categories": ["productivity", "science"],
+    "screenshots": [
+        {
+            "src": "/static/icons/icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "form_factor": "narrow"
+        },
+        {
+            "src": "/static/icons/icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "form_factor": "wide"
+        }
+    ],
     "icons": [
         {
             "src": "/static/icons/icon-192.png",

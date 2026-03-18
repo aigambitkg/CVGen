@@ -1,0 +1,236 @@
+name: Build Desktop Installers
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          pip install -e ".[api,dev]"
+          pip install pyinstaller
+
+      - name: Build executable
+        run: |
+          pyinstaller --name CVGen --onedir --noconfirm --clean \
+            --add-data "src/cvgen/web/static:cvgen/web/static" \
+            --collect-all cvgen \
+            --hidden-import uvicorn --hidden-import uvicorn.logging \
+            --hidden-import "uvicorn.loops.auto" \
+            --hidden-import "uvicorn.protocols.http.auto" \
+            --hidden-import "uvicorn.protocols.http.h11_impl" \
+            --hidden-import "uvicorn.protocols.websockets.auto" \
+            --hidden-import "uvicorn.lifespan.on" --hidden-import "uvicorn.lifespan.off" \
+            --hidden-import fastapi --hidden-import "starlette.responses" \
+            --hidden-import "starlette.routing" --hidden-import "starlette.middleware.cors" \
+            --hidden-import "anyio._backends._asyncio" --hidden-import h11 \
+            --hidden-import pydantic --hidden-import "scipy.optimize" \
+            --paths src src/cvgen/standalone.py
+
+      - name: Create AppImage
+        run: |
+          # Download appimagetool
+          wget -q https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
+          chmod +x appimagetool-x86_64.AppImage
+
+          # Create AppDir structure
+          mkdir -p CVGen.AppDir/usr/bin
+          mkdir -p CVGen.AppDir/usr/share/icons/hicolor/256x256/apps
+          mkdir -p CVGen.AppDir/usr/share/applications
+
+          # Copy built files
+          cp -r dist/CVGen/* CVGen.AppDir/usr/bin/
+
+          # Create .desktop file
+          cat > CVGen.AppDir/CVGen.desktop << 'DESKTOP'
+          [Desktop Entry]
+          Name=CVGen
+          Comment=Quantum Computing for Every Device
+          Exec=CVGen
+          Icon=cvgen
+          Type=Application
+          Categories=Development;Science;
+          DESKTOP
+          cp CVGen.AppDir/CVGen.desktop CVGen.AppDir/usr/share/applications/
+
+          # Create icon from SVG
+          cp desktop/resources/icon.svg CVGen.AppDir/usr/share/icons/hicolor/256x256/apps/cvgen.svg
+          cp desktop/resources/icon.svg CVGen.AppDir/cvgen.svg
+
+          # Create AppRun
+          cat > CVGen.AppDir/AppRun << 'APPRUN'
+          #!/bin/bash
+          SELF=$(readlink -f "$0")
+          HERE=${SELF%/*}
+          exec "${HERE}/usr/bin/CVGen" "$@"
+          APPRUN
+          chmod +x CVGen.AppDir/AppRun
+
+          # Build AppImage
+          ARCH=x86_64 ./appimagetool-x86_64.AppImage --no-appstream CVGen.AppDir CVGen-linux-x86_64.AppImage
+          chmod +x CVGen-linux-x86_64.AppImage
+
+      - name: Also create tar.gz
+        run: |
+          cd dist && tar -czf ../CVGen-linux-x86_64.tar.gz CVGen/
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: linux-installer
+          path: |
+            CVGen-linux-x86_64.AppImage
+            CVGen-linux-x86_64.tar.gz
+
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          pip install -e ".[api,dev]"
+          pip install pyinstaller
+
+      - name: Build executable
+        run: |
+          pyinstaller --name CVGen --onedir --noconfirm --clean --windowed `
+            --add-data "src/cvgen/web/static;cvgen/web/static" `
+            --collect-all cvgen `
+            --hidden-import uvicorn --hidden-import uvicorn.logging `
+            --hidden-import "uvicorn.loops.auto" `
+            --hidden-import "uvicorn.protocols.http.auto" `
+            --hidden-import "uvicorn.protocols.http.h11_impl" `
+            --hidden-import "uvicorn.protocols.websockets.auto" `
+            --hidden-import "uvicorn.lifespan.on" --hidden-import "uvicorn.lifespan.off" `
+            --hidden-import fastapi --hidden-import "starlette.responses" `
+            --hidden-import "starlette.routing" --hidden-import "starlette.middleware.cors" `
+            --hidden-import "anyio._backends._asyncio" --hidden-import h11 `
+            --hidden-import pydantic --hidden-import "scipy.optimize" `
+            --paths src src/cvgen/standalone.py
+
+      - name: Create NSIS installer
+        uses: joncloud/makensis-action@v4
+        with:
+          script-file: installer/windows/installer.nsi
+
+      - name: Also create zip
+        run: |
+          Compress-Archive -Path dist/CVGen/* -DestinationPath CVGen-windows-x86_64.zip
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows-installer
+          path: |
+            CVGen-Setup-*.exe
+            CVGen-windows-x86_64.zip
+
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          pip install -e ".[api,dev]"
+          pip install pyinstaller
+
+      - name: Build executable
+        run: |
+          pyinstaller --name CVGen --onedir --noconfirm --clean --windowed \
+            --add-data "src/cvgen/web/static:cvgen/web/static" \
+            --collect-all cvgen \
+            --hidden-import uvicorn --hidden-import uvicorn.logging \
+            --hidden-import "uvicorn.loops.auto" \
+            --hidden-import "uvicorn.protocols.http.auto" \
+            --hidden-import "uvicorn.protocols.http.h11_impl" \
+            --hidden-import "uvicorn.protocols.websockets.auto" \
+            --hidden-import "uvicorn.lifespan.on" --hidden-import "uvicorn.lifespan.off" \
+            --hidden-import fastapi --hidden-import "starlette.responses" \
+            --hidden-import "starlette.routing" --hidden-import "starlette.middleware.cors" \
+            --hidden-import "anyio._backends._asyncio" --hidden-import h11 \
+            --hidden-import pydantic --hidden-import "scipy.optimize" \
+            --osx-bundle-identifier com.aigambit.cvgen \
+            --paths src src/cvgen/standalone.py
+
+      - name: Create DMG
+        run: |
+          mkdir -p dmg_contents
+          cp -r dist/CVGen.app dmg_contents/ 2>/dev/null || cp -r dist/CVGen dmg_contents/
+          hdiutil create -volname CVGen -srcfolder dmg_contents -ov -format UDZO CVGen-macos.dmg
+
+      - name: Also create tar.gz
+        run: |
+          cd dist && tar -czf ../CVGen-macos-universal.tar.gz CVGen*/
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: macos-installer
+          path: |
+            CVGen-macos.dmg
+            CVGen-macos-universal.tar.gz
+
+  release:
+    needs: [build-linux, build-windows, build-macos]
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          merge-multiple: true
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: "CVGen ${{ github.ref_name }}"
+          body: |
+            ## CVGen ${{ github.ref_name }} — Quantum Computing for Every Device
+
+            ### Download for your platform:
+            | Platform | File | Description |
+            |----------|------|-------------|
+            | 🐧 Linux | `CVGen-linux-x86_64.AppImage` | **One-click** — double-click to run |
+            | 🪟 Windows | `CVGen-Setup-*.exe` | **One-click installer** |
+            | 🍎 macOS | `CVGen-macos.dmg` | **Drag to Applications** |
+
+            ### What's included:
+            - Quantum Computing Dashboard with real-time monitoring
+            - 5 AI Agents (Grover, VQE, QAOA, QML, AutoAgent)
+            - Natural Language Interface ("Create a Bell state")
+            - Built-in quantum simulator (up to 20 qubits)
+            - Circuit Builder with visual gate palette
+            - REST API for integration
+
+            ### First launch:
+            1. Download the file for your OS
+            2. Run it (double-click)
+            3. Your browser opens automatically with the CVGen Dashboard
+            4. That's it!
+          files: |
+            CVGen-linux-x86_64.AppImage
+            CVGen-linux-x86_64.tar.gz
+            CVGen-windows-x86_64.zip
+            CVGen-macos.dmg
+            CVGen-macos-universal.tar.gz
+          draft: false
+          prerelease: false
