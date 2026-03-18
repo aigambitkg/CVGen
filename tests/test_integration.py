@@ -1,7 +1,5 @@
 """End-to-end integration tests."""
 
-import pytest
-
 from cvgen.agents.quantum_agent import QuantumAgent, SearchTask
 from cvgen.agents.hybrid_agent import HybridAgent, VariationalTask
 from cvgen.agents.tools import build_bell_pair, build_ghz_state, build_superposition_circuit

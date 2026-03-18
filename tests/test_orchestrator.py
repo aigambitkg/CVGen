@@ -4,7 +4,7 @@ import pytest
 
 from cvgen.backends.simulator import StateVectorSimulator
 from cvgen.core.circuit import QuantumCircuit
-from cvgen.core.types import GateType, JobConfig, JobStatus
+from cvgen.core.types import JobConfig, JobStatus
 from cvgen.orchestrator.optimizer import CircuitOptimizer
 from cvgen.orchestrator.pipeline import Pipeline
 from cvgen.orchestrator.scheduler import BackendRequirements, TaskScheduler

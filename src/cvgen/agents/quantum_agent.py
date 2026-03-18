@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass
-from typing import Any, Callable
+from typing import Callable
 
 from cvgen.agents.base import (
     Action,
@@ -17,7 +17,6 @@ from cvgen.agents.tools import (
     analyze_result,
     build_grover_diffusion,
     build_grover_oracle,
-    build_superposition_circuit,
     optimal_grover_iterations,
 )
 from cvgen.backends.base import QuantumBackend

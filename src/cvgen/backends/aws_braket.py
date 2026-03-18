@@ -26,7 +26,7 @@ from cvgen.core.types import (
 logger = logging.getLogger(__name__)
 
 try:
-    from braket.aws import AwsDevice, AwsQuantumTask
+    from braket.aws import AwsDevice
     from braket.circuits import Circuit as BraketCircuit
 
     HAS_BRAKET = True
