@@ -37,12 +37,8 @@ class QuantumLogger:
     def __init__(self, name: str = "cvgen") -> None:
         self._logger = setup_quantum_logger(name)
 
-    def circuit_submitted(
-        self, circuit_name: str, num_qubits: int, backend: str
-    ) -> None:
-        self._logger.info(
-            f"Circuit '{circuit_name}' ({num_qubits}q) submitted to {backend}"
-        )
+    def circuit_submitted(self, circuit_name: str, num_qubits: int, backend: str) -> None:
+        self._logger.info(f"Circuit '{circuit_name}' ({num_qubits}q) submitted to {backend}")
 
     def circuit_completed(
         self, circuit_name: str, shots: int, unique_outcomes: int, duration_s: float
@@ -58,21 +54,13 @@ class QuantumLogger:
     def agent_step(self, agent_name: str, step: int, action: str) -> None:
         self._logger.debug(f"Agent '{agent_name}' step {step}: {action}")
 
-    def agent_completed(
-        self, agent_name: str, steps: int, success: bool
-    ) -> None:
+    def agent_completed(self, agent_name: str, steps: int, success: bool) -> None:
         status = "succeeded" if success else "failed"
-        self._logger.info(
-            f"Agent '{agent_name}' {status} after {steps} steps"
-        )
+        self._logger.info(f"Agent '{agent_name}' {status} after {steps} steps")
 
-    def optimization_progress(
-        self, iteration: int, cost: float, **kwargs: Any
-    ) -> None:
+    def optimization_progress(self, iteration: int, cost: float, **kwargs: Any) -> None:
         extra = " ".join(f"{k}={v}" for k, v in kwargs.items())
-        self._logger.info(
-            f"Optimization iter {iteration}: cost={cost:.6f} {extra}"
-        )
+        self._logger.info(f"Optimization iter {iteration}: cost={cost:.6f} {extra}")
 
     def warning(self, msg: str) -> None:
         self._logger.warning(msg)

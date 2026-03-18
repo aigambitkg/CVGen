@@ -64,9 +64,7 @@ class AWSBraketBackend(QuantumBackend):
         s3_prefix: str = "cvgen-results",
     ) -> None:
         if not HAS_BRAKET:
-            raise ImportError(
-                "Amazon Braket SDK is required: pip install amazon-braket-sdk"
-            )
+            raise ImportError("Amazon Braket SDK is required: pip install amazon-braket-sdk")
 
         # Resolve shorthand names
         self._device_arn = BRAKET_DEVICES.get(device_arn, device_arn)
@@ -92,19 +90,27 @@ class AWSBraketBackend(QuantumBackend):
         return BackendCapabilities(
             max_qubits=25,  # IonQ Harmony: 11, Aria: 25, Rigetti: 84
             supported_gates={
-                GateType.H, GateType.X, GateType.Y, GateType.Z,
-                GateType.S, GateType.T,
-                GateType.RX, GateType.RY, GateType.RZ,
-                GateType.CX, GateType.CZ, GateType.SWAP, GateType.CCX,
-                GateType.MEASURE, GateType.BARRIER,
+                GateType.H,
+                GateType.X,
+                GateType.Y,
+                GateType.Z,
+                GateType.S,
+                GateType.T,
+                GateType.RX,
+                GateType.RY,
+                GateType.RZ,
+                GateType.CX,
+                GateType.CZ,
+                GateType.SWAP,
+                GateType.CCX,
+                GateType.MEASURE,
+                GateType.BARRIER,
             },
             supports_statevector=False,
             supports_mid_circuit_measurement=False,
         )
 
-    def execute(
-        self, circuit: QuantumCircuit, config: JobConfig | None = None
-    ) -> CircuitResult:
+    def execute(self, circuit: QuantumCircuit, config: JobConfig | None = None) -> CircuitResult:
         """Execute circuit on AWS Braket."""
         config = config or JobConfig()
         device = self._get_device()

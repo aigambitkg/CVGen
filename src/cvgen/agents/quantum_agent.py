@@ -103,9 +103,7 @@ class QuantumAgent(BaseAgent):
     def _decide_search(self, state: AgentState, task: SearchTask) -> Action:
         """Decide on a Grover search action."""
         iteration = state.custom.get("iteration", 0)
-        num_iterations = optimal_grover_iterations(
-            task.num_qubits, task.max_solutions
-        )
+        num_iterations = optimal_grover_iterations(task.num_qubits, task.max_solutions)
 
         if iteration >= num_iterations:
             # Analyze collected results and switch to verify phase
@@ -135,8 +133,7 @@ class QuantumAgent(BaseAgent):
         self._solutions_found = [c for c in candidates if task.oracle_fn(c)]
 
         logger.info(
-            f"[{self.name}] Found {len(self._solutions_found)} solutions: "
-            f"{self._solutions_found}"
+            f"[{self.name}] Found {len(self._solutions_found)} solutions: {self._solutions_found}"
         )
 
         state.custom["phase"] = "done"
@@ -145,9 +142,7 @@ class QuantumAgent(BaseAgent):
             params={"result": self._solutions_found},
         )
 
-    def _build_grover_circuit(
-        self, task: SearchTask, num_iterations: int
-    ) -> QuantumCircuit:
+    def _build_grover_circuit(self, task: SearchTask, num_iterations: int) -> QuantumCircuit:
         """Build a complete Grover search circuit."""
         n = task.num_qubits
         qc = QuantumCircuit(n)

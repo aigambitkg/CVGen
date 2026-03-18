@@ -29,6 +29,7 @@ class TestEndToEnd:
 
         # Execute via scheduler
         import time
+
         start = time.time()
         record = scheduler.submit(optimized, JobConfig(shots=1000, seed=42))
         duration = time.time() - start
@@ -118,6 +119,7 @@ class TestEndToEnd:
         metrics = MetricsCollector()
 
         import time
+
         for i in range(5):
             qc = QuantumCircuit(2)
             qc.h(0).cx(0, 1).measure_all()

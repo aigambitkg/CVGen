@@ -7,12 +7,17 @@ from pydantic import BaseModel, Field
 
 # --- Circuit models ---
 
+
 class GateRequest(BaseModel):
     """A single gate operation."""
 
-    gate: str = Field(..., description="Gate name: h, x, y, z, s, t, rx, ry, rz, cx, cz, swap, ccx, measure")
+    gate: str = Field(
+        ..., description="Gate name: h, x, y, z, s, t, rx, ry, rz, cx, cz, swap, ccx, measure"
+    )
     targets: list[int] = Field(..., description="Target qubit indices")
-    params: list[float] = Field(default_factory=list, description="Gate parameters (e.g. rotation angle)")
+    params: list[float] = Field(
+        default_factory=list, description="Gate parameters (e.g. rotation angle)"
+    )
 
 
 class CircuitRequest(BaseModel):
@@ -38,6 +43,7 @@ class CircuitResponse(BaseModel):
 
 # --- Agent models ---
 
+
 class GroverRequest(BaseModel):
     """Request for Grover search."""
 
@@ -61,7 +67,9 @@ class VQERequest(BaseModel):
     """Request for VQE optimization."""
 
     num_qubits: int = Field(..., ge=1, le=8, description="Number of qubits")
-    cost_observable: dict[str, float] = Field(..., description="Observable as {bitstring: eigenvalue}")
+    cost_observable: dict[str, float] = Field(
+        ..., description="Observable as {bitstring: eigenvalue}"
+    )
     ansatz_depth: int = Field(default=2, ge=1, le=10)
     max_iterations: int = Field(default=50, ge=1, le=500)
     optimizer: str = Field(default="COBYLA")
@@ -81,6 +89,7 @@ class VQEResponse(BaseModel):
 
 
 # --- Backend models ---
+
 
 class BackendInfo(BaseModel):
     """Information about a quantum backend."""
@@ -102,6 +111,7 @@ class BackendListResponse(BaseModel):
 
 # --- Job models ---
 
+
 class JobStatusResponse(BaseModel):
     """Status of a submitted job."""
 
@@ -115,6 +125,7 @@ class JobStatusResponse(BaseModel):
 
 
 # --- Health ---
+
 
 class HealthResponse(BaseModel):
     """API health check response."""

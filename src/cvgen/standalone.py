@@ -18,10 +18,7 @@ import socket
 import logging
 
 # Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format="[CVGen] %(message)s"
-)
+logging.basicConfig(level=logging.INFO, format="[CVGen] %(message)s")
 log = logging.getLogger("cvgen.standalone")
 
 # Default port
@@ -59,6 +56,7 @@ def start_server(host, port):
     """Start the FastAPI server."""
     import uvicorn
     from cvgen.api.app import app
+
     uvicorn.run(app, host=host, port=port, log_level="warning")
 
 
@@ -89,11 +87,7 @@ def main():
     print()
 
     # Start server in background thread
-    server_thread = threading.Thread(
-        target=start_server,
-        args=(HOST, PORT),
-        daemon=True
-    )
+    server_thread = threading.Thread(target=start_server, args=(HOST, PORT), daemon=True)
     server_thread.start()
 
     # Wait for server to be ready

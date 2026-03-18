@@ -64,17 +64,13 @@ class TestZMQConnectionManager:
 
     def test_context_manager_lifecycle(self, mock_server):
         """Test connection lifecycle with context manager."""
-        with ZMQConnectionManager(
-            host="localhost", job_port=5555, telemetry_port=5556
-        ) as manager:
+        with ZMQConnectionManager(host="localhost", job_port=5555, telemetry_port=5556) as manager:
             assert manager.is_connected()
             assert manager.get_state() == ConnectionState.CONNECTED
 
     def test_manual_connect_disconnect(self, mock_server):
         """Test manual connect and disconnect."""
-        manager = ZMQConnectionManager(
-            host="localhost", job_port=5555, telemetry_port=5556
-        )
+        manager = ZMQConnectionManager(host="localhost", job_port=5555, telemetry_port=5556)
         assert not manager.is_connected()
 
         manager.connect()

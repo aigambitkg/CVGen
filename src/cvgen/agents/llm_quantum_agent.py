@@ -114,9 +114,7 @@ class LLMQuantumAgent:
                 prompt = self._build_prompt(task, rag_context)
             else:
                 # Retry: include error feedback
-                prompt = self._build_retry_prompt(
-                    task, generated_code, rag_context
-                )
+                prompt = self._build_retry_prompt(task, generated_code, rag_context)
 
             # Step 3: Call LLM
             llm_response = self._call_ollama(prompt, self.SYSTEM_PROMPT)
@@ -156,9 +154,7 @@ class LLMQuantumAgent:
             is_valid, error_msg = self._validate_code(generated_code)
 
             if not is_valid:
-                logger.warning(
-                    f"Code validation failed (attempt {attempt + 1}): {error_msg}"
-                )
+                logger.warning(f"Code validation failed (attempt {attempt + 1}): {error_msg}")
                 if attempt < self.max_code_retries - 1:
                     retries += 1
                     continue
@@ -273,9 +269,7 @@ class LLMQuantumAgent:
                 f"Generate QPanda3 Python code to accomplish this task."
             )
 
-    def _build_retry_prompt(
-        self, task: str, previous_code: str = "", rag_context: str = ""
-    ) -> str:
+    def _build_retry_prompt(self, task: str, previous_code: str = "", rag_context: str = "") -> str:
         """Build a retry prompt with error feedback.
 
         Args:
@@ -292,9 +286,7 @@ class LLMQuantumAgent:
         )
 
         if rag_context and "No relevant documents" not in rag_context:
-            base += (
-                f"Documentation context:\n{rag_context}\n\n"
-            )
+            base += f"Documentation context:\n{rag_context}\n\n"
 
         base += (
             f"Task: {task}\n\n"

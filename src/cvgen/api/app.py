@@ -30,6 +30,7 @@ def _init_backends() -> None:
     # Try to load Origin Pilot
     try:
         from cvgen.backends.origin_pilot import OriginPilotBackend
+
         backend_registry["origin_pilot"] = OriginPilotBackend()
     except Exception:
         pass
@@ -37,6 +38,7 @@ def _init_backends() -> None:
     # Try to load Qiskit
     try:
         from cvgen.backends.qiskit_backend import QiskitBackend
+
         backend_registry["qiskit"] = QiskitBackend()
     except Exception:
         pass
@@ -44,6 +46,7 @@ def _init_backends() -> None:
     # Try to load IBM Cloud
     try:
         from cvgen.backends.ibm_cloud import IBMCloudBackend
+
         token = os.environ.get("IBM_QUANTUM_TOKEN")
         if token:
             backend_registry["ibm_cloud"] = IBMCloudBackend(token=token)
@@ -53,6 +56,7 @@ def _init_backends() -> None:
     # Try to load AWS Braket
     try:
         from cvgen.backends.aws_braket import AWSBraketBackend
+
         if os.environ.get("AWS_DEFAULT_REGION"):
             backend_registry["aws_braket"] = AWSBraketBackend()
     except Exception:
@@ -61,6 +65,7 @@ def _init_backends() -> None:
     # Try to load Azure Quantum
     try:
         from cvgen.backends.azure_quantum import AzureQuantumBackend
+
         resource_id = os.environ.get("AZURE_QUANTUM_RESOURCE_ID")
         if resource_id:
             backend_registry["azure_quantum"] = AzureQuantumBackend(resource_id=resource_id)

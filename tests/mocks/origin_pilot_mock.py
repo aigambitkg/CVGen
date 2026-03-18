@@ -94,9 +94,7 @@ class OriginPilotMock:
                 self._router_thread.start()
 
                 # Start telemetry thread
-                self._telemetry_thread = threading.Thread(
-                    target=self._run_telemetry, daemon=True
-                )
+                self._telemetry_thread = threading.Thread(target=self._run_telemetry, daemon=True)
                 self._telemetry_thread.start()
 
                 logger.info(
@@ -205,9 +203,7 @@ class OriginPilotMock:
             }
 
         # Simulate job processing in background thread
-        thread = threading.Thread(
-            target=self._process_job, args=(identity, job_id), daemon=True
-        )
+        thread = threading.Thread(target=self._process_job, args=(identity, job_id), daemon=True)
         thread.start()
         self._job_threads.append(thread)
 
@@ -350,9 +346,7 @@ class OriginPilotMock:
                     if current_time >= self._next_calibration_time and not self._is_calibrating:
                         self._is_calibrating = True
                         self._publish_calibration_started()
-                        threading.Thread(
-                            target=self._simulate_calibration, daemon=True
-                        ).start()
+                        threading.Thread(target=self._simulate_calibration, daemon=True).start()
 
                 # Publish system status every second
                 self._publish_system_status()
@@ -366,13 +360,9 @@ class OriginPilotMock:
         """Publish system status telemetry."""
         with self._lock:
             active_jobs = sum(
-                1 for j in self._jobs.values()
-                if j["status"] in ("QUEUED", "RUNNING")
+                1 for j in self._jobs.values() if j["status"] in ("QUEUED", "RUNNING")
             )
-            queue_depth = sum(
-                1 for j in self._jobs.values()
-                if j["status"] == "QUEUED"
-            )
+            queue_depth = sum(1 for j in self._jobs.values() if j["status"] == "QUEUED")
 
         status_msg = {
             "channel": "system_status",
@@ -416,9 +406,7 @@ class OriginPilotMock:
 
         with self._lock:
             self._is_calibrating = False
-            self._next_calibration_time = (
-                time.time() + self.calibration_interval_sec
-            )
+            self._next_calibration_time = time.time() + self.calibration_interval_sec
 
         # Publish calibration completed
         msg = {

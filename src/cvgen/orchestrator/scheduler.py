@@ -243,9 +243,7 @@ class SmartScheduler(TaskScheduler):
                 candidates.append((name, backend))
 
         if not candidates:
-            raise RuntimeError(
-                f"No backend with {circuit.num_qubits}+ qubits available"
-            )
+            raise RuntimeError(f"No backend with {circuit.num_qubits}+ qubits available")
 
         # Sort by telemetry status and statistics
         def score_backend(item: tuple[str, QuantumBackend]) -> tuple[int, float, float]:
@@ -325,9 +323,7 @@ class SmartScheduler(TaskScheduler):
         validator = CircuitValidator()
         validation_result = validator.validate(circuit)
         if not validation_result.success:
-            error_msg = "Circuit validation failed: " + "; ".join(
-                validation_result.errors
-            )
+            error_msg = "Circuit validation failed: " + "; ".join(validation_result.errors)
             logger.error(error_msg)
             raise ValueError(error_msg)
 
@@ -369,15 +365,17 @@ class SmartScheduler(TaskScheduler):
                 result = retry_result.result
                 record.result = result
                 record.status = JobStatus.COMPLETED
-                self._update_statistics(backend_name, success=True, duration=time.time() - record.submitted_at)
-                logger.info(f"Job {job_id} completed on {backend_name} "
-                           f"after {retry_result.attempts} attempt(s)")
+                self._update_statistics(
+                    backend_name, success=True, duration=time.time() - record.submitted_at
+                )
+                logger.info(
+                    f"Job {job_id} completed on {backend_name} "
+                    f"after {retry_result.attempts} attempt(s)"
+                )
             else:
                 # Step 4: Fallback to alternative backends
                 available_backends = [
-                    (n, b)
-                    for n, b in self._backends.items()
-                    if n != backend_name
+                    (n, b) for n, b in self._backends.items() if n != backend_name
                 ]
                 if available_backends:
                     logger.info(f"Primary backend {backend_name} failed, trying fallback chain")
@@ -387,26 +385,38 @@ class SmartScheduler(TaskScheduler):
                         record.result = fallback_result.result
                         record.backend_name = fallback_result.backend_used
                         record.status = JobStatus.COMPLETED
-                        self._update_statistics(fallback_result.backend_used, success=True, duration=time.time() - record.submitted_at)
-                        logger.info(f"Job {job_id} completed on fallback backend "
-                                   f"{fallback_result.backend_used}")
+                        self._update_statistics(
+                            fallback_result.backend_used,
+                            success=True,
+                            duration=time.time() - record.submitted_at,
+                        )
+                        logger.info(
+                            f"Job {job_id} completed on fallback backend "
+                            f"{fallback_result.backend_used}"
+                        )
                     except Exception as e:
                         record.error = str(e)
                         record.status = JobStatus.FAILED
-                        self._update_statistics(backend_name, success=False, duration=time.time() - record.submitted_at)
+                        self._update_statistics(
+                            backend_name, success=False, duration=time.time() - record.submitted_at
+                        )
                         logger.error(f"Job {job_id} failed after all retries and fallbacks: {e}")
                         raise
                 else:
                     record.error = "All retries failed and no fallback backends available"
                     record.status = JobStatus.FAILED
-                    self._update_statistics(backend_name, success=False, duration=time.time() - record.submitted_at)
+                    self._update_statistics(
+                        backend_name, success=False, duration=time.time() - record.submitted_at
+                    )
                     logger.error(record.error)
                     raise RuntimeError(record.error)
 
         except Exception as e:
             record.error = str(e)
             record.status = JobStatus.FAILED
-            self._update_statistics(backend_name, success=False, duration=time.time() - record.submitted_at)
+            self._update_statistics(
+                backend_name, success=False, duration=time.time() - record.submitted_at
+            )
             raise
         finally:
             record.completed_at = time.time()
@@ -442,9 +452,8 @@ class SmartScheduler(TaskScheduler):
                 stats.avg_execution_time_s = duration
             else:
                 stats.avg_execution_time_s = (
-                    (stats.avg_execution_time_s * (stats.total_jobs - 1) + duration)
-                    / stats.total_jobs
-                )
+                    stats.avg_execution_time_s * (stats.total_jobs - 1) + duration
+                ) / stats.total_jobs
 
     def get_statistics(self, backend_name: str) -> Optional[JobStatistics]:
         """Get job statistics for a backend.

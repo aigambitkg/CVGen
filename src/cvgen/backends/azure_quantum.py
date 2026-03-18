@@ -71,9 +71,7 @@ class AzureQuantumBackend(QuantumBackend):
         target: str = "ionq.simulator",
     ) -> None:
         if not HAS_AZURE:
-            raise ImportError(
-                "Azure Quantum SDK is required: pip install azure-quantum"
-            )
+            raise ImportError("Azure Quantum SDK is required: pip install azure-quantum")
         if not HAS_QISKIT:
             raise ImportError("Qiskit is required for Azure Quantum: pip install qiskit")
 
@@ -103,19 +101,27 @@ class AzureQuantumBackend(QuantumBackend):
         return BackendCapabilities(
             max_qubits=29,  # IonQ Aria: 25, Quantinuum H2: 32
             supported_gates={
-                GateType.H, GateType.X, GateType.Y, GateType.Z,
-                GateType.S, GateType.T,
-                GateType.RX, GateType.RY, GateType.RZ,
-                GateType.CX, GateType.CZ, GateType.SWAP, GateType.CCX,
-                GateType.MEASURE, GateType.BARRIER,
+                GateType.H,
+                GateType.X,
+                GateType.Y,
+                GateType.Z,
+                GateType.S,
+                GateType.T,
+                GateType.RX,
+                GateType.RY,
+                GateType.RZ,
+                GateType.CX,
+                GateType.CZ,
+                GateType.SWAP,
+                GateType.CCX,
+                GateType.MEASURE,
+                GateType.BARRIER,
             },
             supports_statevector=False,
             supports_mid_circuit_measurement=True,
         )
 
-    def execute(
-        self, circuit: QuantumCircuit, config: JobConfig | None = None
-    ) -> CircuitResult:
+    def execute(self, circuit: QuantumCircuit, config: JobConfig | None = None) -> CircuitResult:
         """Execute circuit on Azure Quantum."""
         config = config or JobConfig()
         self._connect()

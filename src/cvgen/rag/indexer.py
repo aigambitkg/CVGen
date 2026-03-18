@@ -29,9 +29,7 @@ class DocumentChunker:
         """Initialize the document chunker."""
         pass
 
-    def chunk(
-        self, text: str, chunk_size: int = 1000, overlap: int = 200
-    ) -> list[str]:
+    def chunk(self, text: str, chunk_size: int = 1000, overlap: int = 200) -> list[str]:
         """Split text into overlapping chunks using a simple sliding window.
 
         Args:
@@ -156,8 +154,7 @@ class RAGIndexer:
                 return True
             else:
                 logger.error(
-                    f"Failed to create collection: {response.status_code} "
-                    f"- {response.text}"
+                    f"Failed to create collection: {response.status_code} - {response.text}"
                 )
                 return False
 
@@ -329,10 +326,7 @@ class RAGIndexer:
                 logger.info(f"Indexed {len(documents)} documents successfully")
                 return len(documents)
             else:
-                logger.error(
-                    f"Failed to index documents: {response.status_code} "
-                    f"- {response.text}"
-                )
+                logger.error(f"Failed to index documents: {response.status_code} - {response.text}")
                 return 0
 
         except Exception as e:

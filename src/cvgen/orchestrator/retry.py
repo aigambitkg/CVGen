@@ -116,8 +116,7 @@ class RetryPolicy:
                 # Check if we should give up
                 if attempt >= self.max_retries:
                     logger.error(
-                        f"All {self.max_retries + 1} attempts exhausted. "
-                        f"Last error: {error_msg}"
+                        f"All {self.max_retries + 1} attempts exhausted. Last error: {error_msg}"
                     )
                     return RetryResult(
                         success=False,
@@ -131,12 +130,7 @@ class RetryPolicy:
                 wait_time = self._calculate_wait(attempt)
 
                 # Check if backend is calibrating
-                if (
-                    self.retry_on_calibrating
-                    and backend_name
-                    and HAS_BRIDGE
-                    and self.telemetry
-                ):
+                if self.retry_on_calibrating and backend_name and HAS_BRIDGE and self.telemetry:
                     status = self._check_backend_status(backend_name)
                     if status == SystemStatus.CALIBRATING:
                         wait_time = self._wait_for_calibration_complete(
@@ -173,7 +167,7 @@ class RetryPolicy:
             Wait time in seconds.
         """
         # Exponential backoff: delay = base_delay * 2^attempt
-        delay = self.base_delay * (2 ** attempt)
+        delay = self.base_delay * (2**attempt)
 
         # Add jitter if enabled
         if self.jitter:
@@ -242,7 +236,5 @@ class RetryPolicy:
             time.sleep(check_interval)
 
         total_wait = time.time() - start_time
-        logger.warning(
-            f"Timeout waiting for {backend_name} calibration after {total_wait:.1f}s"
-        )
+        logger.warning(f"Timeout waiting for {backend_name} calibration after {total_wait:.1f}s")
         return total_wait

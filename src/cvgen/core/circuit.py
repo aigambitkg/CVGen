@@ -63,8 +63,7 @@ class QuantumCircuit:
     def gate_count(self) -> int:
         """Number of non-measurement gate operations."""
         return sum(
-            1 for op in self._operations
-            if op.gate_type not in (GateType.MEASURE, GateType.BARRIER)
+            1 for op in self._operations if op.gate_type not in (GateType.MEASURE, GateType.BARRIER)
         )
 
     @property
@@ -73,9 +72,7 @@ class QuantumCircuit:
 
     def _validate_qubit(self, qubit: int) -> None:
         if not 0 <= qubit < self._num_qubits:
-            raise ValueError(
-                f"Qubit {qubit} out of range for {self._num_qubits}-qubit circuit"
-            )
+            raise ValueError(f"Qubit {qubit} out of range for {self._num_qubits}-qubit circuit")
 
     def _validate_clbit(self, clbit: int) -> None:
         if not 0 <= clbit < self._num_clbits:
@@ -185,9 +182,7 @@ class QuantumCircuit:
         """Measure a qubit into a classical bit."""
         self._validate_qubit(qubit)
         self._validate_clbit(clbit)
-        self._operations.append(
-            GateOp(GateType.MEASURE, (qubit,), classical_target=clbit)
-        )
+        self._operations.append(GateOp(GateType.MEASURE, (qubit,), classical_target=clbit))
         return self
 
     def measure_all(self) -> Self:
@@ -200,9 +195,7 @@ class QuantumCircuit:
 
     def barrier(self) -> Self:
         """Add a barrier (no-op separator for visualization)."""
-        self._operations.append(
-            GateOp(GateType.BARRIER, tuple(range(self._num_qubits)))
-        )
+        self._operations.append(GateOp(GateType.BARRIER, tuple(range(self._num_qubits))))
         return self
 
     def copy(self) -> QuantumCircuit:
@@ -229,9 +222,7 @@ class QuantumCircuit:
         new_ops = []
         for i, op in enumerate(new_circuit._operations):
             if i in params and op.params:
-                new_ops.append(
-                    GateOp(op.gate_type, op.targets, (params[i],), op.classical_target)
-                )
+                new_ops.append(GateOp(op.gate_type, op.targets, (params[i],), op.classical_target))
             else:
                 new_ops.append(op)
         new_circuit._operations = new_ops
@@ -240,7 +231,8 @@ class QuantumCircuit:
     def parameter_indices(self) -> list[int]:
         """Return indices of parametric gates."""
         return [
-            i for i, op in enumerate(self._operations)
+            i
+            for i, op in enumerate(self._operations)
             if op.gate_type in (GateType.RX, GateType.RY, GateType.RZ)
         ]
 

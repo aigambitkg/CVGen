@@ -113,7 +113,9 @@ class TestCircuitValidator:
         assert result.success
         assert any("measurement" in w.lower() for w in result.warnings)
 
-    def test_validate_circuit_too_many_qubits(self, invalid_circuit_too_many_qubits, simulator_backend):
+    def test_validate_circuit_too_many_qubits(
+        self, invalid_circuit_too_many_qubits, simulator_backend
+    ):
         """Test validation rejects circuit with too many qubits for backend."""
         validator = CircuitValidator()
         result = validator.validate(invalid_circuit_too_many_qubits, simulator_backend)
@@ -320,7 +322,9 @@ class TestFallbackChain:
         assert backend1.execute.call_count == 0  # Should not call offline backend
 
     @pytest.mark.skipif(not HAS_BRIDGE, reason="Bridge not available")
-    def test_fallback_skips_calibrating_backends(self, simple_circuit, simulator_backend, telemetry):
+    def test_fallback_skips_calibrating_backends(
+        self, simple_circuit, simulator_backend, telemetry
+    ):
         """Test that fallback skips CALIBRATING backends."""
         telemetry.update_status("backend1", SystemStatus.CALIBRATING)
 
@@ -397,7 +401,9 @@ class TestSmartScheduler:
         assert stats.failed_jobs == 0
         assert stats.success_rate == 1.0
 
-    def test_smart_scheduler_selects_best_backend(self, simple_circuit, simulator_backend, telemetry):
+    def test_smart_scheduler_selects_best_backend(
+        self, simple_circuit, simulator_backend, telemetry
+    ):
         """Test intelligent backend selection using telemetry."""
         scheduler = SmartScheduler(telemetry=telemetry)
         scheduler.register_backend("simulator", simulator_backend)

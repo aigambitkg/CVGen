@@ -81,9 +81,7 @@ class RAGRetriever:
         logger.info("Ollama unavailable, using TF-IDF embeddings")
         return self._get_tfidf_embeddings(texts)
 
-    def _get_ollama_embeddings(
-        self, texts: list[str]
-    ) -> list[list[float]] | None:
+    def _get_ollama_embeddings(self, texts: list[str]) -> list[list[float]] | None:
         """Get embeddings from Ollama.
 
         Args:
@@ -207,9 +205,7 @@ class RAGRetriever:
             )
 
             if response.status_code != 200:
-                logger.error(
-                    f"Search failed: {response.status_code} - {response.text}"
-                )
+                logger.error(f"Search failed: {response.status_code} - {response.text}")
                 return []
 
             results = response.json().get("result", [])
@@ -261,7 +257,7 @@ class RAGRetriever:
                 if remaining > 100:  # Only add if we have meaningful space
                     doc_text = (
                         f"Source: {result.source}\n\n"
-                        f"{result.content[:remaining - 30]}\n\n...[truncated]\n\n"
+                        f"{result.content[: remaining - 30]}\n\n...[truncated]\n\n"
                     )
                     context_parts.append(doc_text)
                 break

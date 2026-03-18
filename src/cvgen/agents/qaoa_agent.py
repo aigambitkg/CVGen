@@ -115,10 +115,12 @@ class QAOAAgent(BaseAgent):
         return AgentResult(
             success=True,
             value=result,
-            history=[{
-                "costs": self.history.costs,
-                "num_evaluations": self.history.num_evals,
-            }],
+            history=[
+                {
+                    "costs": self.history.costs,
+                    "num_evaluations": self.history.num_evals,
+                }
+            ],
             quantum_results=self._quantum_results,
             total_steps=self.history.num_evals,
             metadata={"agent_name": self.name, "p": task.p},
@@ -133,7 +135,8 @@ class QAOAAgent(BaseAgent):
             return self._evaluate(params.tolist(), task)
 
         opt = minimize(
-            cost_fn, x0,
+            cost_fn,
+            x0,
             method=task.optimizer_method,
             options={"maxiter": task.max_iterations},
         )

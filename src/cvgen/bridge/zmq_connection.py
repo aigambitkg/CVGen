@@ -159,9 +159,7 @@ class ZMQConnectionManager:
         """
         with self._lock:
             if self._state != ConnectionState.CONNECTED or not self._dealer_socket:
-                raise RuntimeError(
-                    f"Cannot send job: connection state is {self._state.value}"
-                )
+                raise RuntimeError(f"Cannot send job: connection state is {self._state.value}")
 
             try:
                 msg_bytes = json.dumps(job_msg).encode("utf-8")
@@ -202,7 +200,9 @@ class ZMQConnectionManager:
                     self._dealer_socket.setsockopt(zmq.RCVTIMEO, timeout_ms)
 
                 # DEALER sockets may receive multipart messages; get all parts
-                msg_parts = self._dealer_socket.recv_multipart(flags=zmq.NOBLOCK if timeout_ms == 0 else 0)
+                msg_parts = self._dealer_socket.recv_multipart(
+                    flags=zmq.NOBLOCK if timeout_ms == 0 else 0
+                )
 
                 if timeout_ms is not None:
                     self._dealer_socket.setsockopt(zmq.RCVTIMEO, original_timeout)

@@ -118,10 +118,12 @@ class QMLAgent(BaseAgent):
         return AgentResult(
             success=True,
             value=result,
-            history=[{
-                "losses": self.history.losses,
-                "accuracies": self.history.accuracies,
-            }],
+            history=[
+                {
+                    "losses": self.history.losses,
+                    "accuracies": self.history.accuracies,
+                }
+            ],
             quantum_results=self._quantum_results,
             total_steps=self.history.num_evals,
             metadata={"agent_name": self.name},
@@ -143,7 +145,8 @@ class QMLAgent(BaseAgent):
             return self._compute_loss(params.tolist(), train_x, train_y, n_qubits, depth)
 
         opt = minimize(
-            loss_fn, x0,
+            loss_fn,
+            x0,
             method="COBYLA",
             options={"maxiter": task.max_iterations},
         )
@@ -213,7 +216,7 @@ class QMLAgent(BaseAgent):
         # P(class=1) = probability of measuring |1> on qubit 0
         prob_1 = 0.0
         for bitstring, count in result.counts.items():
-            if bitstring[0] == '1':  # First qubit determines class
+            if bitstring[0] == "1":  # First qubit determines class
                 prob_1 += count / result.shots
 
         return prob_1
@@ -230,9 +233,7 @@ class QMLAgent(BaseAgent):
 
         predictions = []
         for features in data:
-            prob_1 = self._classify_sample(
-                features.tolist(), self._optimal_params, n_qubits, depth
-            )
+            prob_1 = self._classify_sample(features.tolist(), self._optimal_params, n_qubits, depth)
             predictions.append(1 if prob_1 > 0.5 else 0)
         return predictions
 

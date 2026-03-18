@@ -94,9 +94,7 @@ class FallbackChain:
             # Check backend health status
             if not self._is_backend_available(backend_name):
                 status = self._get_backend_status(backend_name)
-                logger.debug(
-                    f"Skipping backend {backend_name}: status={status}"
-                )
+                logger.debug(f"Skipping backend {backend_name}: status={status}")
                 fallbacks_tried.append(backend_name)
                 continue
 
@@ -121,9 +119,7 @@ class FallbackChain:
 
             except Exception as e:
                 last_error = str(e)
-                logger.warning(
-                    f"Backend {backend_name} failed: {last_error}"
-                )
+                logger.warning(f"Backend {backend_name} failed: {last_error}")
                 fallbacks_tried.append(backend_name)
                 continue
 

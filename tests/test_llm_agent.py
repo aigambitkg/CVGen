@@ -131,17 +131,13 @@ class TestRAGIndexer:
         assert sim_01 > sim_02
 
     @patch("requests.get")
-    def test_qdrant_health_check_failure(
-        self, mock_get: Mock, indexer: RAGIndexer
-    ) -> None:
+    def test_qdrant_health_check_failure(self, mock_get: Mock, indexer: RAGIndexer) -> None:
         """Health check should return False on connection error."""
         mock_get.side_effect = Exception("Connection failed")
         assert indexer._check_qdrant_health() is False
 
     @patch("requests.get")
-    def test_qdrant_health_check_success(
-        self, mock_get: Mock, indexer: RAGIndexer
-    ) -> None:
+    def test_qdrant_health_check_success(self, mock_get: Mock, indexer: RAGIndexer) -> None:
         """Health check should return True on 200 response."""
         mock_response = Mock()
         mock_response.status_code = 200
@@ -170,15 +166,11 @@ class TestRAGIndexer:
                     assert mock_put.called
 
     @patch("cvgen.rag.indexer.requests.put")
-    def test_index_documents_mock(
-        self, mock_put: Mock, indexer: RAGIndexer
-    ) -> None:
+    def test_index_documents_mock(self, mock_put: Mock, indexer: RAGIndexer) -> None:
         """Should index documents successfully."""
         # Mock Qdrant health check and collection creation
         with patch.object(indexer, "_check_qdrant_health", return_value=True):
-            with patch.object(
-                indexer, "_create_collection_if_not_exists", return_value=True
-            ):
+            with patch.object(indexer, "_create_collection_if_not_exists", return_value=True):
                 with patch.object(
                     indexer, "_get_embeddings", return_value=[[0.1, 0.2], [0.3, 0.4]]
                 ):
@@ -246,14 +238,10 @@ class TestRAGRetriever:
         assert results == []
 
     @patch("requests.post")
-    def test_retrieve_with_results(
-        self, mock_post: Mock, retriever: RAGRetriever
-    ) -> None:
+    def test_retrieve_with_results(self, mock_post: Mock, retriever: RAGRetriever) -> None:
         """Retrieve should return results from Qdrant."""
         with patch.object(retriever, "_check_qdrant_health", return_value=True):
-            with patch.object(
-                retriever, "_get_embeddings", return_value=[[0.1, 0.2, 0.3]]
-            ):
+            with patch.object(retriever, "_get_embeddings", return_value=[[0.1, 0.2, 0.3]]):
                 mock_response = Mock()
                 mock_response.status_code = 200
                 mock_response.json.return_value = {
@@ -441,9 +429,7 @@ import os
 
         assert is_valid is False
 
-    def test_validate_code_network_operations(
-        self, agent: LLMQuantumAgent
-    ) -> None:
+    def test_validate_code_network_operations(self, agent: LLMQuantumAgent) -> None:
         """Should reject network operations."""
         code = "import requests\nrequests.get('http://example.com')"
         is_valid, error = agent._validate_code(code)
@@ -471,9 +457,7 @@ import os
         assert mock_post.called
 
     @patch("requests.post")
-    def test_call_ollama_connection_error(
-        self, mock_post: Mock, agent: LLMQuantumAgent
-    ) -> None:
+    def test_call_ollama_connection_error(self, mock_post: Mock, agent: LLMQuantumAgent) -> None:
         """Should handle Ollama connection errors."""
         import requests
 
@@ -585,16 +569,12 @@ class TestQuantumAskAPI:
 
     def test_quantum_ask_endpoint(self, client) -> None:
         """Endpoint should accept quantum ask requests."""
-        with patch(
-            "cvgen.agents.llm_quantum_agent.LLMQuantumAgent.run"
-        ) as mock_run:
+        with patch("cvgen.agents.llm_quantum_agent.LLMQuantumAgent.run") as mock_run:
             # Mock successful agent run
             mock_run.return_value = LLMAgentResult(
                 success=True,
                 generated_code="q = QProg()",
-                execution_result=CircuitResult(
-                    counts={"0": 512, "1": 512}, shots=1024
-                ),
+                execution_result=CircuitResult(counts={"0": 512, "1": 512}, shots=1024),
                 interpretation="Test interpretation",
                 retries=0,
                 model_used="test_model",

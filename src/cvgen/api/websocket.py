@@ -31,7 +31,9 @@ class EventBroadcaster:
         """Unregister a client connection."""
         if websocket in self.active_connections:
             self.active_connections.remove(websocket)
-            logger.info(f"WebSocket client disconnected. Total clients: {len(self.active_connections)}")
+            logger.info(
+                f"WebSocket client disconnected. Total clients: {len(self.active_connections)}"
+            )
 
     async def publish(self, event_type: str, data: Any) -> None:
         """Publish an event to all connected clients."""
@@ -58,25 +60,34 @@ class EventBroadcaster:
 
     async def broadcast_job_status(self, job_id: str, status: str, progress: int = 0) -> None:
         """Broadcast job status change."""
-        await self.publish("job_status_change", {
-            "job_id": job_id,
-            "status": status,
-            "progress": progress,
-        })
+        await self.publish(
+            "job_status_change",
+            {
+                "job_id": job_id,
+                "status": status,
+                "progress": progress,
+            },
+        )
 
     async def broadcast_backend_status(self, backend_name: str, available: bool) -> None:
         """Broadcast backend availability change."""
-        await self.publish("backend_status_change", {
-            "backend": backend_name,
-            "available": available,
-        })
+        await self.publish(
+            "backend_status_change",
+            {
+                "backend": backend_name,
+                "available": available,
+            },
+        )
 
     async def broadcast_agent_progress(self, agent_id: str, progress: str) -> None:
         """Broadcast agent execution progress."""
-        await self.publish("agent_progress", {
-            "agent_id": agent_id,
-            "progress": progress,
-        })
+        await self.publish(
+            "agent_progress",
+            {
+                "agent_id": agent_id,
+                "progress": progress,
+            },
+        )
 
     async def broadcast_system_metrics(self, metrics: dict) -> None:
         """Broadcast system metrics."""

@@ -43,9 +43,7 @@ class QiskitBackend(QuantumBackend):
 
     def __init__(self, backend_name: str = "aer_simulator") -> None:
         if not HAS_QISKIT:
-            raise ImportError(
-                "Qiskit is not installed. Install it with: pip install cvgen[qiskit]"
-            )
+            raise ImportError("Qiskit is not installed. Install it with: pip install cvgen[qiskit]")
         self._backend_name = backend_name
 
     @property
@@ -57,19 +55,27 @@ class QiskitBackend(QuantumBackend):
         return BackendCapabilities(
             max_qubits=30,
             supported_gates={
-                GateType.H, GateType.X, GateType.Y, GateType.Z,
-                GateType.S, GateType.T,
-                GateType.RX, GateType.RY, GateType.RZ,
-                GateType.CX, GateType.CZ, GateType.SWAP, GateType.CCX,
-                GateType.MEASURE, GateType.BARRIER,
+                GateType.H,
+                GateType.X,
+                GateType.Y,
+                GateType.Z,
+                GateType.S,
+                GateType.T,
+                GateType.RX,
+                GateType.RY,
+                GateType.RZ,
+                GateType.CX,
+                GateType.CZ,
+                GateType.SWAP,
+                GateType.CCX,
+                GateType.MEASURE,
+                GateType.BARRIER,
             },
             supports_statevector=True,
             supports_mid_circuit_measurement=True,
         )
 
-    def execute(
-        self, circuit: QuantumCircuit, config: JobConfig | None = None
-    ) -> CircuitResult:
+    def execute(self, circuit: QuantumCircuit, config: JobConfig | None = None) -> CircuitResult:
         config = config or JobConfig()
         qc = self._translate_circuit(circuit)
 

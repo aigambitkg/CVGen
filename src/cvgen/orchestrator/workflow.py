@@ -123,9 +123,7 @@ class DAGWorkflow:
                 node_name = group[0]
                 try:
                     node_fn = self._nodes[node_name]
-                    node_input = self._prepare_node_input(
-                        node_name, initial_inputs, node_results
-                    )
+                    node_input = self._prepare_node_input(node_name, initial_inputs, node_results)
                     logger.info(f"[{self.name}] Running node: {node_name}")
                     start = time.time()
                     output = node_fn(node_input)
@@ -161,9 +159,7 @@ class DAGWorkflow:
                             output = future.result()
                             node_results[node_name] = output
                             execution_order.append(node_name)
-                            logger.debug(
-                                f"[{self.name}] Node '{node_name}' completed successfully"
-                            )
+                            logger.debug(f"[{self.name}] Node '{node_name}' completed successfully")
                         except Exception as e:
                             logger.error(f"[{self.name}] Node '{node_name}' failed: {e}")
                             return WorkflowResult(
@@ -235,9 +231,7 @@ class DAGWorkflow:
 
             if not current_level:
                 # This should not happen if _check_for_cycles passed
-                raise RuntimeError(
-                    f"Circular dependency detected in {self.name}"
-                )
+                raise RuntimeError(f"Circular dependency detected in {self.name}")
 
             groups.append(current_level)
 

@@ -11,9 +11,19 @@ from cvgen.core.types import JobConfig
 router = APIRouter(prefix="/circuits", tags=["circuits"])
 
 GATE_MAP = {
-    "h": "h", "x": "x", "y": "y", "z": "z", "s": "s", "t": "t",
-    "rx": "rx", "ry": "ry", "rz": "rz",
-    "cx": "cx", "cz": "cz", "swap": "swap", "ccx": "ccx",
+    "h": "h",
+    "x": "x",
+    "y": "y",
+    "z": "z",
+    "s": "s",
+    "t": "t",
+    "rx": "rx",
+    "ry": "ry",
+    "rz": "rz",
+    "cx": "cx",
+    "cz": "cz",
+    "swap": "swap",
+    "ccx": "ccx",
     "measure": "measure",
 }
 
@@ -61,7 +71,9 @@ def _build_circuit(req: CircuitRequest) -> QuantumCircuit:
                 for t in gate.targets:
                     qc.measure(t, t)
         except (IndexError, ValueError) as e:
-            raise HTTPException(status_code=400, detail=f"Invalid gate parameters for {gate.gate}: {e}")
+            raise HTTPException(
+                status_code=400, detail=f"Invalid gate parameters for {gate.gate}: {e}"
+            )
 
     return qc
 

@@ -18,9 +18,7 @@ class CircuitOptimizer:
         2: Level 1 + merge consecutive single-qubit rotations
     """
 
-    def optimize(
-        self, circuit: QuantumCircuit, level: int = 1
-    ) -> QuantumCircuit:
+    def optimize(self, circuit: QuantumCircuit, level: int = 1) -> QuantumCircuit:
         """Optimize a circuit at the given level.
 
         Args:
@@ -95,9 +93,7 @@ class CircuitOptimizer:
                         # Rotation cancels out
                         i += 2
                         continue
-                    result.append(
-                        GateOp(a.gate_type, a.targets, (merged_angle,))
-                    )
+                    result.append(GateOp(a.gate_type, a.targets, (merged_angle,)))
                     i += 2
                     continue
             result.append(ops[i])

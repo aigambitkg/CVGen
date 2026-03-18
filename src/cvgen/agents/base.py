@@ -18,11 +18,11 @@ logger = logging.getLogger(__name__)
 class ActionType(Enum):
     """Types of actions an agent can take."""
 
-    QUANTUM = auto()      # Execute a quantum circuit
-    CLASSICAL = auto()    # Perform classical computation
-    HYBRID = auto()       # Quantum-classical hybrid loop
-    OBSERVE = auto()      # Gather more information
-    TERMINATE = auto()    # Stop execution
+    QUANTUM = auto()  # Execute a quantum circuit
+    CLASSICAL = auto()  # Perform classical computation
+    HYBRID = auto()  # Quantum-classical hybrid loop
+    OBSERVE = auto()  # Gather more information
+    TERMINATE = auto()  # Stop execution
 
 
 @dataclass
@@ -144,11 +144,13 @@ class BaseAgent(ABC):
             action = self.decide(self.state)
 
             # Record in history
-            self.state.history.append({
-                "step": step,
-                "action_type": action.action_type.name,
-                "has_circuit": action.circuit is not None,
-            })
+            self.state.history.append(
+                {
+                    "step": step,
+                    "action_type": action.action_type.name,
+                    "has_circuit": action.circuit is not None,
+                }
+            )
 
             # Check for termination
             if action.action_type == ActionType.TERMINATE:
