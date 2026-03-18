@@ -6,16 +6,15 @@ import json
 import time
 import uuid
 from datetime import datetime, timezone
-from unittest.mock import MagicMock, patch
 
 import pytest
 import zmq
 
 from cvgen.bridge.circuit_translator import CircuitTranslator
-from cvgen.bridge.job_protocol import JobProtocol, JobResponse
+from cvgen.bridge.job_protocol import JobProtocol
 from cvgen.bridge.zmq_connection import ConnectionState, ZMQConnectionManager
 from cvgen.core.circuit import QuantumCircuit
-from cvgen.core.types import GateType, JobStatus
+from cvgen.core.types import JobStatus
 from tests.mocks.origin_pilot_mock import OriginPilotMock
 
 

@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import math
-from typing import Optional
 
 from cvgen.core.circuit import QuantumCircuit
 from cvgen.core.types import GateType
@@ -29,13 +27,13 @@ class CircuitTranslator:
         lines.append("from pyqpanda import *")
         lines.append("")
         lines.append("def circuit_program():")
-        lines.append(f"    qvm = CPUQVM()")
-        lines.append(f"    qvm.initState_computational_basis()")
+        lines.append("    qvm = CPUQVM()")
+        lines.append("    qvm.initState_computational_basis()")
         lines.append(f"    q = qvm.qAlloc_qubits({circuit.num_qubits})")
         lines.append(f"    c = qvm.cAlloc_cbits({circuit.num_clbits})")
         lines.append("")
         lines.append("    # Build circuit")
-        lines.append(f"    prog = QProg()")
+        lines.append("    prog = QProg()")
         lines.append("")
 
         # Add gate operations

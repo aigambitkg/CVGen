@@ -287,7 +287,7 @@ class DAGWorkflow:
         Returns:
             Mermaid diagram string.
         """
-        lines = [f"graph TD"]
+        lines = ["graph TD"]
 
         # Add nodes
         for node_name in self._nodes:

@@ -152,7 +152,7 @@ def cmd_serve(args: argparse.Namespace) -> int:
 def cmd_health(args: argparse.Namespace) -> int:
     """Check health of all configured services."""
     try:
-        from cvgen.config import CloudConfig
+        from cvgen.config import CloudConfig  # noqa: F401
     except ImportError:
         _print_error("Failed to import CVGen modules")
         return 1
@@ -243,7 +243,7 @@ def cmd_run(args: argparse.Namespace) -> int:
         simulator = StateVectorSimulator(max_qubits=20)
         result = simulator.run(circuit, shots=1000)
 
-        _print_success(f"Execution completed successfully")
+        _print_success("Execution completed successfully")
         print(f"\nResults: {result}")
 
         return 0

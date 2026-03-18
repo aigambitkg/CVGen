@@ -13,13 +13,10 @@ This launcher:
 """
 
 import threading
-import subprocess
 import time
-import os
 import sys
 import signal
 import logging
-import json
 import webbrowser
 from pathlib import Path
 
@@ -32,8 +29,8 @@ except ImportError:
     HAS_TKINTER = False
 
 try:
-    import pystray
-    from PIL import Image, ImageDraw
+    import pystray  # noqa: F401
+    from PIL import Image, ImageDraw  # noqa: F401
     HAS_PYSTRAY = True
 except ImportError:
     HAS_PYSTRAY = False
@@ -387,8 +384,8 @@ class CVGenLauncher:
         try:
             # Try to import required modules
             try:
-                import uvicorn
-                from cvgen.api.app import app
+                import uvicorn  # noqa: F401
+                from cvgen.api.app import app  # noqa: F401
             except ImportError as e:
                 self.add_log(f'ERROR: Missing dependencies: {e}')
                 self.add_log('Please install: pip install fastapi uvicorn')

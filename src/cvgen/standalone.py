@@ -10,10 +10,8 @@ When the user double-clicks the CVGen executable, this script:
 4. Handles graceful shutdown on Ctrl+C or window close
 """
 
-import os
 import sys
 import time
-import signal
 import threading
 import webbrowser
 import socket

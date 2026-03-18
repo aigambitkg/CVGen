@@ -3,23 +3,22 @@
 from __future__ import annotations
 
 import pytest
-import time
-from unittest.mock import Mock, MagicMock, patch
+from unittest.mock import Mock
 
 from cvgen.backends.simulator import StateVectorSimulator
 from cvgen.core.circuit import QuantumCircuit
-from cvgen.core.types import CircuitResult, JobConfig, JobStatus, GateType
-from cvgen.orchestrator.validator import CircuitValidator, ComplexityEstimate, ValidationResult
+from cvgen.core.types import CircuitResult, JobStatus, GateType
+from cvgen.orchestrator.validator import CircuitValidator
 from cvgen.orchestrator.retry import RetryPolicy, RetryResult
-from cvgen.orchestrator.fallback import FallbackChain, FallbackResult, AllBackendsFailedError
-from cvgen.orchestrator.scheduler import SmartScheduler, JobStatistics
+from cvgen.orchestrator.fallback import FallbackChain, AllBackendsFailedError
+from cvgen.orchestrator.scheduler import SmartScheduler
 from cvgen.orchestrator.workflow import DAGWorkflow, WorkflowResult
 
 try:
     from cvgen.bridge.telemetry import (
         LocalTelemetrySubscriber,
         SystemStatus,
-        BackendHealth,
+        BackendHealth,  # noqa: F401
     )
 
     HAS_BRIDGE = True
@@ -276,8 +275,6 @@ class TestFallbackChain:
 
     def test_fallback_tries_backends_in_order(self, simple_circuit):
         """Test that fallback tries backends in order."""
-        call_order = []
-
         backend1 = Mock()
         backend1.execute.side_effect = ValueError("Backend 1 failed")
 
