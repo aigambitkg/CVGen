@@ -18,7 +18,6 @@ from cvgen.core.types import (
     GateType,
     JobConfig,
 )
-from cvgen.utils.math import tensor_product
 
 
 class StateVectorSimulator(QuantumBackend):
@@ -188,7 +187,6 @@ class StateVectorSimulator(QuantumBackend):
         # Move them to the correct positions
         # Result shape: (2, 2, remaining dims...)
         # Need to move axis 0 -> qubit_a and axis 1 -> qubit_b
-        perm = list(range(n))
         # Current positions: gate outputs are at 0 and 1
         # We need to put them at qubit_a and qubit_b
         source = [0, 1]

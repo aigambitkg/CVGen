@@ -11,7 +11,7 @@ from dataclasses import dataclass
 from enum import Enum, auto
 from typing import Any
 
-from cvgen.agents.base import AgentResult, BaseAgent
+from cvgen.agents.base import AgentResult
 from cvgen.backends.base import QuantumBackend
 from cvgen.backends.simulator import StateVectorSimulator
 

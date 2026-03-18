@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass, field
-from typing import Any, Callable
+from typing import Any
 
 import numpy as np
 from scipy.optimize import minimize
@@ -19,8 +19,7 @@ from cvgen.agents.base import (
 )
 from cvgen.agents.tools import build_variational_ansatz
 from cvgen.backends.base import QuantumBackend
-from cvgen.core.circuit import QuantumCircuit
-from cvgen.core.types import CircuitResult, JobConfig
+from cvgen.core.types import JobConfig
 
 logger = logging.getLogger(__name__)
 

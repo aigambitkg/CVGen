@@ -11,7 +11,6 @@ When QPanda is not installed, it falls back to the built-in simulator.
 from __future__ import annotations
 
 import logging
-from typing import Any
 
 from cvgen.backends.base import QuantumBackend
 from cvgen.backends.simulator import StateVectorSimulator

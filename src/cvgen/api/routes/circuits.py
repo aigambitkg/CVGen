@@ -4,9 +4,9 @@ from __future__ import annotations
 
 from fastapi import APIRouter, HTTPException
 
-from cvgen.api.models import CircuitRequest, CircuitResponse, GateRequest
+from cvgen.api.models import CircuitRequest, CircuitResponse
 from cvgen.core.circuit import QuantumCircuit
-from cvgen.core.types import GateType, JobConfig
+from cvgen.core.types import JobConfig
 
 router = APIRouter(prefix="/circuits", tags=["circuits"])
 

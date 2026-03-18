@@ -24,7 +24,7 @@ from cvgen.agents.base import (
 )
 from cvgen.backends.base import QuantumBackend
 from cvgen.core.circuit import QuantumCircuit
-from cvgen.core.types import CircuitResult, JobConfig
+from cvgen.core.types import JobConfig
 
 logger = logging.getLogger(__name__)
 
