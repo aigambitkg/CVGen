@@ -1,0 +1,23 @@
+services:
+  cvgen:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      # IBM Quantum (optional)
+      - IBM_QUANTUM_TOKEN=${IBM_QUANTUM_TOKEN:-}
+      - IBM_QUANTUM_BACKEND=${IBM_QUANTUM_BACKEND:-ibm_brisbane}
+      # AWS Braket (optional)
+      - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION:-}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:-}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-}
+      - CVGEN_BRAKET_S3_BUCKET=${CVGEN_BRAKET_S3_BUCKET:-}
+      # Azure Quantum (optional)
+      - AZURE_QUANTUM_RESOURCE_ID=${AZURE_QUANTUM_RESOURCE_ID:-}
+      - AZURE_QUANTUM_LOCATION=${AZURE_QUANTUM_LOCATION:-eastus}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/v1/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3

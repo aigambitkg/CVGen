@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="theme-color" content="#0a0e27">
+    <meta name="description" content="CVGen — Quantum Computing accessible from any device. Build and execute quantum circuits visually.">
+    <link rel="manifest" href="/static/manifest.json">
+    <title>CVGen — Quantum Circuit Builder</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#9883;</text></svg>">
+</head>
+<body>
+    <div id="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-brand">
+                <span class="logo">&#9883;</span>
+                <h1>CVGen</h1>
+                <span class="badge">Quantum</span>
+            </div>
+            <nav class="header-nav">
+                <button class="nav-btn active" data-view="builder">Builder</button>
+                <button class="nav-btn" data-view="agents">Agents</button>
+                <button class="nav-btn" data-view="backends">Backends</button>
+            </nav>
+            <div class="header-status">
+                <span id="backend-indicator" class="status-dot available"></span>
+                <select id="backend-select" class="backend-select">
+                    <option value="simulator">Simulator</option>
+                </select>
+            </div>
+        </header>
+
+        <!-- Circuit Builder View -->
+        <main id="view-builder" class="view active">
+            <div class="builder-layout">
+                <!-- Gate Palette -->
+                <aside class="gate-palette">
+                    <h3>Gates</h3>
+                    <div class="gate-group">
+                        <h4>Single Qubit</h4>
+                        <div class="gate-list">
+                            <button class="gate-btn" data-gate="h" title="Hadamard">H</button>
+                            <button class="gate-btn" data-gate="x" title="Pauli-X (NOT)">X</button>
+                            <button class="gate-btn" data-gate="y" title="Pauli-Y">Y</button>
+                            <button class="gate-btn" data-gate="z" title="Pauli-Z">Z</button>
+                            <button class="gate-btn" data-gate="s" title="S Phase">S</button>
+                            <button class="gate-btn" data-gate="t" title="T Phase">T</button>
+                        </div>
+                    </div>
+                    <div class="gate-group">
+                        <h4>Rotation</h4>
+                        <div class="gate-list">
+                            <button class="gate-btn param" data-gate="rx" title="Rotation X">Rx</button>
+                            <button class="gate-btn param" data-gate="ry" title="Rotation Y">Ry</button>
+                            <button class="gate-btn param" data-gate="rz" title="Rotation Z">Rz</button>
+                        </div>
+                    </div>
+                    <div class="gate-group">
+                        <h4>Multi-Qubit</h4>
+                        <div class="gate-list">
+                            <button class="gate-btn multi" data-gate="cx" title="CNOT">CX</button>
+                            <button class="gate-btn multi" data-gate="cz" title="Controlled-Z">CZ</button>
+                            <button class="gate-btn multi" data-gate="swap" title="SWAP">SW</button>
+                            <button class="gate-btn multi" data-gate="ccx" title="Toffoli">CCX</button>
+                        </div>
+                    </div>
+                    <div class="gate-group">
+                        <h4>Controls</h4>
+                        <div class="gate-list controls">
+                            <button class="gate-btn measure" data-gate="measure" title="Measure">M</button>
+                        </div>
+                    </div>
+                </aside>
+
+                <!-- Circuit Canvas -->
+                <section class="circuit-area">
+                    <div class="circuit-toolbar">
+                        <label>Qubits: <input type="number" id="num-qubits" value="3" min="1" max="20" class="input-sm"></label>
+                        <label>Shots: <input type="number" id="num-shots" value="1024" min="1" max="100000" class="input-sm"></label>
+                        <button id="btn-clear" class="tool-btn">Clear</button>
+                        <button id="btn-undo" class="tool-btn">Undo</button>
+                        <button id="btn-run" class="tool-btn primary">Run Circuit</button>
+                    </div>
+                    <div id="circuit-canvas" class="circuit-canvas">
+                        <!-- Qubit lines and gates rendered here -->
+                    </div>
+                    <div id="circuit-json" class="circuit-json">
+                        <details>
+                            <summary>Circuit JSON</summary>
+                            <pre id="circuit-json-code"></pre>
+                        </details>
+                    </div>
+                </section>
+
+                <!-- Results Panel -->
+                <aside class="results-panel" id="results-panel">
+                    <h3>Results</h3>
+                    <div id="results-placeholder" class="placeholder">
+                        Run a circuit to see results
+                    </div>
+                    <div id="results-content" class="hidden">
+                        <div class="result-section">
+                            <h4>Measurement Histogram</h4>
+                            <div id="histogram" class="histogram"></div>
+                        </div>
+                        <div class="result-section">
+                            <h4>Most Likely</h4>
+                            <div id="most-likely" class="most-likely"></div>
+                        </div>
+                        <div class="result-section">
+                            <h4>Probabilities</h4>
+                            <div id="probabilities" class="prob-table"></div>
+                        </div>
+                        <div class="result-section">
+                            <h4>Raw Counts</h4>
+                            <pre id="raw-counts" class="raw-output"></pre>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </main>
+
+        <!-- Agents View -->
+        <main id="view-agents" class="view">
+            <div class="agents-layout">
+                <!-- Grover Search -->
+                <section class="agent-card">
+                    <h3>Grover's Quantum Search</h3>
+                    <p class="agent-desc">Find target states in an unstructured search space with quadratic speedup.</p>
+                    <div class="agent-form">
+                        <label>Qubits: <input type="number" id="grover-qubits" value="3" min="2" max="12" class="input-sm"></label>
+                        <label>Target States: <input type="text" id="grover-targets" value="5" placeholder="e.g. 3,5,7" class="input-md"></label>
+                        <label>Shots: <input type="number" id="grover-shots" value="1024" min="1" max="100000" class="input-sm"></label>
+                        <button id="btn-grover" class="tool-btn primary">Run Grover Search</button>
+                    </div>
+                    <div id="grover-results" class="agent-results"></div>
+                </section>
+
+                <!-- VQE Optimization -->
+                <section class="agent-card">
+                    <h3>VQE Optimization</h3>
+                    <p class="agent-desc">Variational Quantum Eigensolver — hybrid quantum-classical optimization.</p>
+                    <div class="agent-form">
+                        <label>Qubits: <input type="number" id="vqe-qubits" value="1" min="1" max="8" class="input-sm"></label>
+                        <label>Ansatz Depth: <input type="number" id="vqe-depth" value="2" min="1" max="10" class="input-sm"></label>
+                        <label>Max Iterations: <input type="number" id="vqe-iterations" value="50" min="1" max="500" class="input-sm"></label>
+                        <label>Shots: <input type="number" id="vqe-shots" value="512" min="1" max="100000" class="input-sm"></label>
+                        <button id="btn-vqe" class="tool-btn primary">Run VQE</button>
+                    </div>
+                    <div id="vqe-results" class="agent-results"></div>
+                </section>
+            </div>
+        </main>
+
+        <!-- Backends View -->
+        <main id="view-backends" class="view">
+            <div class="backends-layout">
+                <h2>Quantum Backends</h2>
+                <p>Available quantum computing backends. Configure cloud providers via environment variables.</p>
+                <div id="backends-list" class="backends-grid"></div>
+                <div class="cloud-setup">
+                    <h3>Cloud Backend Setup</h3>
+                    <div class="setup-cards">
+                        <div class="setup-card">
+                            <h4>IBM Quantum</h4>
+                            <code>export IBM_QUANTUM_TOKEN=your_token</code>
+                            <p>Access IBM's superconducting quantum processors.</p>
+                        </div>
+                        <div class="setup-card">
+                            <h4>AWS Braket</h4>
+                            <code>export AWS_DEFAULT_REGION=us-east-1</code>
+                            <p>IonQ, Rigetti, OQC via Amazon Braket.</p>
+                        </div>
+                        <div class="setup-card">
+                            <h4>Azure Quantum</h4>
+                            <code>export AZURE_QUANTUM_RESOURCE_ID=...</code>
+                            <p>IonQ, Quantinuum via Azure Quantum.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Loading Overlay -->
+        <div id="loading-overlay" class="loading-overlay hidden">
+            <div class="spinner"></div>
+            <p id="loading-text">Executing quantum circuit...</p>
+        </div>
+
+        <!-- Param Dialog -->
+        <dialog id="param-dialog" class="param-dialog">
+            <h3 id="param-dialog-title">Gate Parameter</h3>
+            <label>
+                Angle (radians):
+                <input type="number" id="param-value" value="1.5708" step="0.1" class="input-md">
+            </label>
+            <div class="dialog-hint">
+                Common: &pi;/4=0.785, &pi;/2=1.571, &pi;=3.142
+            </div>
+            <div class="dialog-actions">
+                <button id="param-cancel" class="tool-btn">Cancel</button>
+                <button id="param-ok" class="tool-btn primary">Add Gate</button>
+            </div>
+        </dialog>
+
+        <!-- Multi-qubit target dialog -->
+        <dialog id="target-dialog" class="param-dialog">
+            <h3 id="target-dialog-title">Select Target Qubits</h3>
+            <div id="target-qubit-selectors"></div>
+            <div class="dialog-actions">
+                <button id="target-cancel" class="tool-btn">Cancel</button>
+                <button id="target-ok" class="tool-btn primary">Add Gate</button>
+            </div>
+        </dialog>
+    </div>
+
+    <script src="/static/js/api-client.js"></script>
+    <script src="/static/js/circuit-builder.js"></script>
+    <script src="/static/js/visualizer.js"></script>
+    <script src="/static/js/app.js"></script>
+</body>
+</html>

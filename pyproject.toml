@@ -4,15 +4,15 @@ build-backend = "hatchling.build"
 
 [project]
 name = "cvgen"
-version = "0.1.0"
-description = "AI Agent Framework for Quantum Operating Systems"
+version = "0.2.0"
+description = "Quantum Computing for Every Device — AI Agents, Visual Circuit Builder, Cloud Quantum Hardware"
 readme = "README.md"
 license = "MIT"
 requires-python = ">=3.11"
 authors = [
     { name = "aigambitkg" },
 ]
-keywords = ["quantum", "ai-agents", "quantum-computing", "origin-pilot"]
+keywords = ["quantum", "ai-agents", "quantum-computing", "origin-pilot", "quantum-api", "quantum-web", "ibm-quantum", "aws-braket", "azure-quantum"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
@@ -30,10 +30,24 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+api = [
+    "fastapi>=0.110",
+    "uvicorn[standard]>=0.27",
+]
 qiskit = ["qiskit>=1.0"]
+ibm = ["qiskit>=1.0", "qiskit-ibm-runtime>=0.20"]
+braket = ["amazon-braket-sdk>=1.70"]
+azure = ["azure-quantum>=1.0", "qiskit>=1.0"]
+all-backends = [
+    "qiskit>=1.0",
+    "qiskit-ibm-runtime>=0.20",
+    "amazon-braket-sdk>=1.70",
+    "azure-quantum>=1.0",
+]
 dev = [
     "pytest>=7.0",
     "pytest-cov>=4.0",
+    "httpx>=0.27",
 ]
 
 [tool.hatch.build.targets.wheel]
