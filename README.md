@@ -1,120 +1,182 @@
-# CVGen — AI Agent Framework for Quantum Operating Systems
+# CVGen — Quantum Computing for Every Device
 
-A Python framework for building autonomous AI agents that leverage quantum computing resources. Designed to work with quantum operating systems like **Origin Pilot** and backend-agnostic across IBM Qiskit, Google Cirq, and other quantum platforms.
+Quantum Computing accessible from any device — laptop, tablet, smartphone, or server. Build quantum circuits visually, run AI-powered quantum agents, and execute on real quantum hardware from IBM, AWS, and Azure.
 
-## Features
+## What Makes CVGen Different
 
-- **Quantum Circuit Engine** — Build, compose, and optimize quantum circuits with a fluent Python API
-- **Built-in Simulator** — NumPy-based state vector simulator (no external hardware needed)
-- **AI Agent Framework** — Autonomous agents with perceive → decide → act loops
-- **Grover Search Agent** — Quantum-accelerated unstructured search
-- **Hybrid VQE Agent** — Variational quantum-classical optimization
-- **Task Orchestrator** — Route jobs to the best available quantum backend
-- **Circuit Optimizer** — Reduce gate count and circuit depth automatically
-- **Multi-Backend Support** — Origin Pilot (QPanda), IBM Qiskit, built-in simulator
-- **Monitoring** — Track circuit metrics, execution times, and agent performance
+| Feature | Qiskit | Cirq | PennyLane | **CVGen** |
+|---------|--------|------|-----------|-----------|
+| Visual Circuit Builder (Web) | No | No | No | **Yes** |
+| Mobile-Ready PWA | No | No | No | **Yes** |
+| REST API for Any Client | No | No | No | **Yes** |
+| AI Agents (Auto-Routing) | No | No | No | **Yes** |
+| Multi-Vendor Cloud (IBM+AWS+Azure) | IBM only | Google only | Limited | **All** |
+| Zero-Setup Simulator | Yes | Yes | Yes | **Yes** |
+
+**CVGen is the only framework that makes quantum computing accessible via browser on any device, with intelligent AI agents that automatically choose the best algorithm and backend.**
 
 ## Quick Start
 
 ```bash
-# Install
-pip install -e ".[dev]"
+# Install (basic — simulator + API)
+pip install -e ".[api]"
 
-# Run examples
-python examples/01_hello_quantum.py    # Bell state + GHZ state
-python examples/02_quantum_agent.py    # Grover's search algorithm
-python examples/03_hybrid_vqe.py       # Variational Quantum Eigensolver
+# Start the quantum server
+uvicorn cvgen.api.app:app --reload
 
-# Run tests
-pytest tests/ -v
+# Open browser → http://localhost:8000
+# Build circuits visually, run quantum agents, see results
 ```
 
-## Usage
+### Docker (One Command)
 
-### Build and Execute a Quantum Circuit
+```bash
+docker-compose up
+# → http://localhost:8000
+```
+
+### Python Library
 
 ```python
 from cvgen import QuantumCircuit, JobConfig
 from cvgen.backends.simulator import StateVectorSimulator
 
-# Create a Bell state circuit
+# Bell state
 qc = QuantumCircuit(2)
 qc.h(0).cx(0, 1).measure_all()
 
-# Execute on the built-in simulator
-sim = StateVectorSimulator()
-result = sim.execute(qc, JobConfig(shots=1000))
-print(result.counts)       # {'00': ~500, '11': ~500}
-print(result.most_likely()) # '00' or '11'
+result = StateVectorSimulator().execute(qc, JobConfig(shots=1000))
+print(result.counts)  # {'00': ~500, '11': ~500}
 ```
 
-### Run a Quantum Search Agent
+## Features
+
+### Visual Circuit Builder (Web UI)
+- Drag-and-drop gate placement (touch + mouse)
+- Live circuit diagram rendering
+- Result histograms and probability charts
+- Backend selector (simulator / IBM / AWS / Azure)
+- Mobile-first responsive design (320px+)
+- PWA — installable on home screen
+
+### AI Quantum Agents
+
+| Agent | Algorithm | Use Case |
+|-------|-----------|----------|
+| **QuantumAgent** | Grover's Search | Find items in unsorted data (quadratic speedup) |
+| **HybridAgent** | VQE | Molecular simulation, optimization |
+| **QAOAAgent** | QAOA | MaxCut, routing, scheduling |
+| **QMLAgent** | Quantum ML | Binary classification with quantum kernels |
+| **AutoAgent** | Auto-Select | Analyzes problem → picks best algorithm + backend |
 
 ```python
-from cvgen.agents.quantum_agent import QuantumAgent, SearchTask
-from cvgen.backends.simulator import StateVectorSimulator
+from cvgen.agents.auto_agent import AutoAgent, AutoTask
 
-sim = StateVectorSimulator()
-agent = QuantumAgent(sim, shots=1024)
-
-# Search for x=5 in a 3-qubit space (8 states)
-task = SearchTask(
-    num_qubits=3,
-    oracle_fn=lambda x: x == 5,
-    max_solutions=1,
-)
-solutions = agent.run_search(task)
-print(f"Found: {solutions}")  # [5]
+agent = AutoAgent()
+result = agent.run(AutoTask(
+    problem_type="search",
+    data={"target_states": [5, 12]},
+    num_qubits=4,
+))
+print(result.value)  # {'solutions': [5, 12], 'algorithm': 'grover'}
 ```
 
-### Hybrid Quantum-Classical Optimization (VQE)
+### Multi-Vendor Quantum Backends
 
-```python
-from cvgen.agents.hybrid_agent import HybridAgent, VariationalTask
-from cvgen.backends.simulator import StateVectorSimulator
+| Backend | Provider | Type | Setup |
+|---------|----------|------|-------|
+| `simulator` | Built-in | NumPy simulation | None (always available) |
+| `origin_pilot` | Origin Quantum | QPanda | `pip install pyqpanda` |
+| `qiskit` | IBM | Local simulator | `pip install cvgen[qiskit]` |
+| `ibm_cloud` | IBM Quantum | Real QPU | `export IBM_QUANTUM_TOKEN=...` |
+| `aws_braket` | Amazon | IonQ, Rigetti, OQC | `export AWS_DEFAULT_REGION=...` |
+| `azure_quantum` | Microsoft | IonQ, Quantinuum | `export AZURE_QUANTUM_RESOURCE_ID=...` |
 
-sim = StateVectorSimulator()
-agent = HybridAgent(sim, shots=512)
+### REST API
 
-task = VariationalTask(
-    num_qubits=1,
-    cost_observable={"0": 0.0, "1": 1.0},  # Minimize P(|1⟩)
-    ansatz_depth=1,
-    max_iterations=50,
-)
-result = agent.run(task)
-print(f"Optimal cost: {result.value['optimal_cost']:.4f}")
-```
+Every feature is accessible via HTTP:
 
-### Use with Origin Pilot
+```bash
+# Execute a circuit
+curl -X POST http://localhost:8000/api/v1/circuits/execute \
+  -H "Content-Type: application/json" \
+  -d '{"num_qubits": 2, "gates": [{"gate": "h", "targets": [0]}, {"gate": "cx", "targets": [0, 1]}], "shots": 1000}'
 
-```python
-from cvgen.backends.origin_pilot import OriginPilotBackend
+# Run Grover search
+curl -X POST http://localhost:8000/api/v1/agents/grover \
+  -d '{"num_qubits": 3, "target_states": [5], "shots": 1024}'
 
-# Automatically falls back to built-in simulator if QPanda is not installed
-backend = OriginPilotBackend()
+# Run VQE optimization
+curl -X POST http://localhost:8000/api/v1/agents/vqe \
+  -d '{"num_qubits": 1, "cost_observable": {"0": 0.0, "1": 1.0}, "max_iterations": 50}'
 
-qc = QuantumCircuit(2)
-qc.h(0).cx(0, 1).measure_all()
-result = backend.execute(qc)
+# List backends
+curl http://localhost:8000/api/v1/backends
 ```
 
 ## Architecture
 
 ```
-┌─────────────────────────────────────────────┐
-│                AI Agents                     │
-│  QuantumAgent │ HybridAgent │ Custom Agents  │
-├─────────────────────────────────────────────┤
-│             Orchestrator                     │
-│  TaskScheduler │ CircuitOptimizer │ Pipeline │
-├─────────────────────────────────────────────┤
-│           Quantum Backends                   │
-│  Simulator │ Origin Pilot │ Qiskit │ ...     │
-├─────────────────────────────────────────────┤
-│              Core Engine                     │
-│  QuantumCircuit │ Gates │ Types │ Registry   │
-└─────────────────────────────────────────────┘
+                      Any Device (Browser/Mobile/CLI/API Client)
+                                    |
+                        +-----------+-----------+
+                        |     REST API (FastAPI) |
+                        |     + Web UI (PWA)     |
+                        +-----------+-----------+
+                                    |
+                    +---------------+---------------+
+                    |           AI Agents            |
+                    | Quantum | Hybrid | QAOA | QML  |
+                    |         | Auto-Agent           |
+                    +---------------+---------------+
+                                    |
+                    +---------------+---------------+
+                    |          Orchestrator           |
+                    | Scheduler | Optimizer | Pipeline|
+                    +---------------+---------------+
+                                    |
+          +----------+---------+---------+----------+---------+
+          | Simulator| Origin  | Qiskit  | IBM Cloud| AWS     | Azure
+          | (NumPy)  | Pilot   |         | (QPU)    | Braket  | Quantum
+          +----------+---------+---------+----------+---------+
+```
+
+## Installation Options
+
+```bash
+# Basic (simulator only)
+pip install -e .
+
+# With API server
+pip install -e ".[api]"
+
+# With specific cloud backend
+pip install -e ".[ibm]"       # IBM Quantum
+pip install -e ".[braket]"    # AWS Braket
+pip install -e ".[azure]"     # Azure Quantum
+
+# Everything
+pip install -e ".[api,all-backends,dev]"
+```
+
+## Cloud Backend Setup
+
+### IBM Quantum (Free Tier Available)
+```bash
+export IBM_QUANTUM_TOKEN=your_token_here
+# Get token: https://quantum.ibm.com/
+```
+
+### AWS Braket
+```bash
+export AWS_DEFAULT_REGION=us-east-1
+export AWS_ACCESS_KEY_ID=your_key
+export AWS_SECRET_ACCESS_KEY=your_secret
+```
+
+### Azure Quantum
+```bash
+export AZURE_QUANTUM_RESOURCE_ID=/subscriptions/.../providers/Microsoft.Quantum/Workspaces/...
 ```
 
 ## Supported Gates
@@ -130,11 +192,28 @@ result = backend.execute(qc)
 | SWAP | Two-qubit | Swap |
 | CCX (Toffoli) | Three-qubit | Controlled-controlled-X |
 
+## Development
+
+```bash
+# Install dev dependencies
+pip install -e ".[dev,api]"
+
+# Run tests
+pytest tests/ -v
+
+# Run API tests
+pytest tests/test_api.py -v
+
+# Lint
+ruff check src/ tests/
+```
+
 ## Requirements
 
 - Python 3.11+
 - NumPy >= 1.24
 - SciPy >= 1.10
+- FastAPI >= 0.110 (for API/Web)
 
 ## License
 
